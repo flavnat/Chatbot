@@ -201,8 +201,8 @@ const HeaderButton = styled(Button)`
 `;
 
 const SendButton = styled(Button)`
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     background: black;
     border: 1px dashed black;
