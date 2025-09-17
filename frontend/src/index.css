@@ -1,0 +1,22 @@
+:root {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color: black;
+    background-color: white;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+#root {
+    min-height: 100vh;
+}
