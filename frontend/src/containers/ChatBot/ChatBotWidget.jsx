@@ -7,7 +7,7 @@ import {
     SendOutlined,
     ClearOutlined,
 } from "@ant-design/icons";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import ReactMarkdown from "react-markdown";
 import { sendMessage, clearMessages } from "./actions";
 
@@ -15,19 +15,26 @@ const FloatingButton = styled(Button)`
     position: fixed;
     bottom: 20px;
     right: 20px;
+    border-radius: 50%;
     scale: 1.2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: white;
-    padding: 8px 2px;
     border: 1px dashed black;
     color: black;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    transition: all 0.2s ease;
 
     &:hover {
         background: black;
         color: white;
+        transform: scale(1.1);
     }
 
     &:focus {
@@ -39,17 +46,32 @@ const ChatPanel = styled.div`
     position: fixed;
     bottom: 80px;
     right: 20px;
-    width: 300px;
-    height: 400px;
+    width: 320px;
+    height: 420px;
     background: white;
     border: 1px dashed black;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     z-index: 999;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: slideUp 0.3s ease forwards;
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 `;
 
 const ChatHeader = styled.div`
-    padding: 10px;
+    padding: 12px;
     background: black;
     color: white;
     display: flex;
@@ -60,13 +82,13 @@ const ChatHeader = styled.div`
     h3 {
         margin: 0;
         font-size: 14px;
-        font-weight: normal;
+        font-weight: 500;
     }
 `;
 
 const ChatBody = styled.div`
     flex: 1;
-    padding: 10px;
+    padding: 12px;
     overflow-y: auto;
     background: white;
     border-bottom: 1px dashed black;
@@ -76,18 +98,21 @@ const ChatFooter = styled.div`
     padding: 10px;
     background: white;
     display: flex;
-    gap: 5px;
+    gap: 6px;
     align-items: center;
+    border-top: 1px dashed black;
 `;
 
 const MessageBubble = styled.div`
-    max-width: 70%;
+    max-width: 75%;
     padding: 8px 12px;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.4;
     word-wrap: break-word;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     border: 1px dashed black;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 
     ${(props) =>
         props.sender === "user"
@@ -107,6 +132,12 @@ const MessageBubble = styled.div`
 const MessagesContainer = styled.div`
     display: flex;
     flex-direction: column;
+    gap: 2px;
+`;
+
+const bounce = keyframes`
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
 `;
 
 const TypingIndicator = styled.div`
@@ -116,73 +147,78 @@ const TypingIndicator = styled.div`
     padding: 8px 12px;
     background: white;
     border: 1px dashed black;
+    border-radius: 8px;
     align-self: flex-start;
     font-size: 12px;
     color: black;
 
     .dot {
-        width: 4px;
-        height: 4px;
+        width: 6px;
+        height: 6px;
         background: black;
+        border-radius: 50%;
+        animation: ${bounce} 1.4s infinite ease-in-out;
+    }
+    .dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    .dot:nth-child(3) {
+        animation-delay: 0.4s;
     }
 `;
 
 const StyledInput = styled(Input)`
     border: 1px dashed black;
-    padding: 5px 10px;
-    font-size: 12px;
+    border-radius: 8px;
+    font-size: 13px;
 
     &:focus,
     &:hover {
         border-color: black;
+        box-shadow: none;
     }
+`;
 
-    .ant-input {
-        border: none;
-        outline: none;
+const HeaderButton = styled(Button)`
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+    border: 1px dashed black;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: white;
+        padding: 2px;
+        color: blue;
+        border: 2px dashed white;
     }
 `;
 
 const SendButton = styled(Button)`
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     background: black;
     border: 1px dashed black;
     color: white;
-
-    &:hover {
-        background: white;
-        color: black;
-    }
-
-    &:focus {
-        outline: none;
-    }
-`;
-
-const CloseButton = styled(Button)`
-    background: black;
-    border: 1px dashed white;
-    color: white;
-    width: 25px;
-    height: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
 
     &:hover {
         background: white;
         color: black;
-        border-color: black;
-    }
-
-    &:focus {
-        outline: none;
     }
 `;
+
 const ChatBotWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
@@ -225,15 +261,15 @@ const ChatBotWidget = () => {
             {isOpen && (
                 <ChatPanel>
                     <ChatHeader>
-                        <h3>Linkbuilder Test Chatbot</h3>
+                        <h3>Linkbuilder Chatbot</h3>
                         <div style={{ display: "flex", gap: "5px" }}>
-                            <CloseButton
+                            <HeaderButton
                                 type="text"
                                 icon={<ClearOutlined />}
                                 onClick={handleClear}
                                 title="Clear chat"
                             />
-                            <CloseButton
+                            <HeaderButton
                                 type="text"
                                 icon={<CloseOutlined />}
                                 onClick={() => setIsOpen(false)}
@@ -296,7 +332,6 @@ const ChatBotWidget = () => {
                             ))}
                             {typing && (
                                 <TypingIndicator>
-                                    <span>Bot is typing</span>
                                     <div className="dot"></div>
                                     <div className="dot"></div>
                                     <div className="dot"></div>
@@ -310,7 +345,7 @@ const ChatBotWidget = () => {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onPressEnter={handleKeyPress}
-                            placeholder="Type message..."
+                            placeholder="Type a message..."
                         />
                         <SendButton
                             type="primary"
