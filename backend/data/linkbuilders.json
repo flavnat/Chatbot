@@ -1,0 +1,972 @@
+[
+    {
+        "question": "How do I clear my cart?",
+        "answer": "Go to the Cart page and click 'Clear Cart' or remove items individually. This won't affect completed orders.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I troubleshoot login issues?",
+        "answer": "If you can't log in, check your email and password, ensure your account is activated, and try resetting your password. If the problem persists, contact support via the help menu.",
+        "category": "support"
+    },
+    {
+        "question": "How do I enable two-factor authentication?",
+        "answer": "Go to 'Account Settings' > 'Security' and follow the instructions to enable two-factor authentication for added security.",
+        "category": "account"
+    },
+    {
+        "question": "How do I onboard a new project?",
+        "answer": "Click 'Add Website' in the Projects section, fill in the required details, and follow the onboarding steps to set up your project for link building.",
+        "category": "setup"
+    },
+    {
+        "question": "What should I do if my payment fails?",
+        "answer": "If your payment fails, check your card details, ensure sufficient funds, or try a different payment method. For unresolved issues, contact support.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I update my billing information?",
+        "answer": "Go to 'Account Settings' > 'Billing' to update your payment methods and billing address.",
+        "category": "account"
+    },
+    {
+        "question": "How do I delete my account?",
+        "answer": "To delete your account, go to 'Account Settings' > 'Security' and follow the account deletion process. Note: This action is irreversible.",
+        "category": "account"
+    },
+    {
+        "question": "How do I reset my password?",
+        "answer": "Click 'Forgot Password' on the login page and follow the instructions sent to your email to reset your password.",
+        "category": "account"
+    },
+    {
+        "question": "How do I use advanced filters in the Link Portfolio?",
+        "answer": "In the Link Portfolio, click 'Advanced Filters' to access more granular filtering options such as language, location, and publisher type.",
+        "category": "features"
+    },
+    {
+        "question": "How do I get notified about new link opportunities?",
+        "answer": "Enable notifications in 'Account Settings' > 'Notifications' to receive alerts about new link opportunities and platform updates.",
+        "category": "features"
+    },
+    {
+        "question": "How do I report a bug or issue?",
+        "answer": "Use the chatbot or go to 'Support' in Account Settings to report bugs or issues. Provide as much detail as possible for faster resolution.",
+        "category": "support"
+    },
+    {
+        "question": "How do I access API documentation?",
+        "answer": "API documentation is available in the 'Docs' section of the platform or by contacting support for developer access.",
+        "category": "features"
+    },
+    {
+        "question": "How do I change the platform language?",
+        "answer": "Go to 'Account Settings' > 'Preferences' and select your preferred language from the available options.",
+        "category": "account"
+    },
+    {
+        "question": "How do I view platform updates and changelog?",
+        "answer": "Check the 'Changelog' section in the main menu or visit the documentation folder for the latest platform updates.",
+        "category": "support"
+    },
+    {
+        "question": "How do I use the calendar for scheduling?",
+        "answer": "The calendar in the Dashboard allows you to schedule link placements and content deadlines. Click on a date to add or view scheduled activities.",
+        "category": "features"
+    },
+    {
+        "question": "How do I request a feature?",
+        "answer": "Submit feature requests via the chatbot or through the 'Support' section in Account Settings. Your feedback helps us improve the platform.",
+        "category": "support"
+    },
+    {
+        "question": "How do I access the dashboard?",
+        "answer": "You can access the dashboard from the sidebar menu under 'DASHBOARDS' > 'Overview'. It provides an overview of your links, statistics, and recent activity.",
+        "category": "navigation"
+    },
+    {
+        "question": "What is the Link Portfolio?",
+        "answer": "The Link Portfolio is where you can browse and purchase backlinks. Access it from the sidebar under 'GET JUICE' > 'Link Portfolio'. Here you can filter links by price, domain authority, and other criteria.",
+        "category": "navigation"
+    },
+    {
+        "question": "How do I view my orders?",
+        "answer": "Go to the sidebar and click on 'ORDERS' to view all your current and past orders. You can see order status, items, and manage your purchases there.",
+        "category": "navigation"
+    },
+    {
+        "question": "Where can I see my purchased links?",
+        "answer": "Your purchased links are available under 'LINK CHECKER' > 'Your Links & Statuses' in the sidebar. This shows all your active links and their current status.",
+        "category": "navigation"
+    },
+    {
+        "question": "What is the Competitor Analyzer?",
+        "answer": "The Competitor Analyzer helps you analyze your competitors' backlink profiles. Access it from 'DASHBOARDS' > 'Competitor Analyzer'. It shows competitor backlinks, domain authority, and link opportunities.",
+        "category": "features"
+    },
+    {
+        "question": "How do link suggestions work?",
+        "answer": "Link suggestions are automatically generated opportunities for backlinks. You can find them in 'GET JUICE' > 'Link Suggestions'. Add them to your cart and purchase them to improve your SEO.",
+        "category": "features"
+    },
+    {
+        "question": "What is the Cart for?",
+        "answer": "The Cart allows you to collect link suggestions and prepare them for purchase. Access it from the sidebar 'CART' menu. You can review items, adjust quantities, and proceed to checkout.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I buy links?",
+        "answer": "1. Browse the Link Portfolio or Link Suggestions. 2. Click 'Add to Cart' on desired links. 3. Go to Cart and review your selections. 4. Click 'Checkout' and complete payment. 5. Monitor your orders in the Orders section.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I renew my links?",
+        "answer": "Go to 'LINK CHECKER' > 'Renewals' in the sidebar. Here you can see links that are expiring soon and renew them to maintain your backlink profile.",
+        "category": "commerce"
+    },
+    {
+        "question": "What is the Content Hub?",
+        "answer": "The Content Hub is where you can request custom content for your backlinks. Access it from the sidebar 'CONTENT HUB'. You can submit content requests, review drafts, and approve final content.",
+        "category": "features"
+    },
+    {
+        "question": "How do I add my own website?",
+        "answer": "Go to 'PROJECTS' in the sidebar, then click 'Add Website'. Fill in your website details including URL, niche, and target keywords. This allows the platform to suggest relevant backlinks.",
+        "category": "setup"
+    },
+    {
+        "question": "What are owned websites?",
+        "answer": "Owned websites are the domains you manage and want to build backlinks for. You can view and manage them in the 'PROJECTS' section of the sidebar.",
+        "category": "setup"
+    },
+    {
+        "question": "How do I check link status?",
+        "answer": "Visit 'LINK CHECKER' > 'Your Links & Statuses'. This page shows all your purchased links with their current status (active, pending, broken, etc.) and last check dates.",
+        "category": "monitoring"
+    },
+    {
+        "question": "What is Link Steal?",
+        "answer": "Link Steal allows you to identify and potentially acquire backlinks from competitors. Access it from 'GET JUICE' > 'Link Steal' in the sidebar.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the Wish List?",
+        "answer": "The Wish List lets you save link opportunities for later. When browsing links, click the heart icon to add to wishlist. Access your saved items from the 'WISH LIST' in the sidebar.",
+        "category": "features"
+    },
+    {
+        "question": "What is Juice Flow?",
+        "answer": "Juice Flow visualizes the flow of link equity through your backlink network. Access it from 'DASHBOARDS' > 'External JuiceFlow' to see how authority flows between domains.",
+        "category": "analytics"
+    },
+    {
+        "question": "How do I update my account settings?",
+        "answer": "Click on your avatar in the top right, then select 'Account Settings'. Here you can update your profile, billing information, and notification preferences.",
+        "category": "account"
+    },
+    {
+        "question": "Where can I find my invoices?",
+        "answer": "Go to 'Account Settings' > 'Invoices' or directly to 'INVOICES' in the sidebar. You can view, download, and manage all your billing history there.",
+        "category": "account"
+    },
+    {
+        "question": "How do I contact support?",
+        "answer": "You can reach support through the chatbot in the bottom right corner, or by going to 'Account Settings' > 'Support'. For urgent issues, use the help menu.",
+        "category": "support"
+    },
+    {
+        "question": "What payment methods are accepted?",
+        "answer": "During checkout, you can pay with credit card, PayPal, or bank transfer depending on your account settings. Contact support for specific payment options.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I cancel an order?",
+        "answer": "Go to 'ORDERS' and find the order you want to cancel. If it's still pending, you may be able to cancel it. For active orders, contact support for assistance.",
+        "category": "commerce"
+    },
+    {
+        "question": "What is domain authority?",
+        "answer": "Domain Authority (DA) is a metric that predicts how well a website will rank on search engines. Higher DA domains provide more valuable backlinks. You can filter by DA in the Link Portfolio.",
+        "category": "education"
+    },
+    {
+        "question": "How long does link placement take?",
+        "answer": "Link placement time varies by publisher and link type. Most links are placed within 2-4 weeks, but premium placements may take longer. You can track progress in your Orders.",
+        "category": "commerce"
+    },
+    {
+        "question": "What if a link goes down?",
+        "answer": "If a purchased link becomes unavailable, our system will detect it during regular checks. You'll be notified, and we may provide a replacement link or refund depending on the circumstances.",
+        "category": "support"
+    },
+    {
+        "question": "How do I filter links in the portfolio?",
+        "answer": "In the Link Portfolio, use the filter options on the left sidebar. You can filter by price range, domain authority, niche, anchor type, and more to find the perfect links.",
+        "category": "features"
+    },
+    {
+        "question": "What are anchor types?",
+        "answer": "Anchor types refer to how your link text appears. Options include exact match (your keyword), partial match, branded, or generic. Choose based on your SEO strategy.",
+        "category": "education"
+    },
+    {
+        "question": "How do I view analytics?",
+        "answer": "The main Dashboard provides key analytics including link growth, domain authority changes, and traffic metrics. For detailed reports, check individual project dashboards.",
+        "category": "analytics"
+    },
+    {
+        "question": "What is the difference between suggested and portfolio links?",
+        "answer": "Portfolio links are available inventory from publishers. Suggested links are AI-generated opportunities based on your website's profile and competitors.",
+        "category": "features"
+    },
+    {
+        "question": "How do I manage multiple websites?",
+        "answer": "Add all your websites in the 'PROJECTS' section. You can switch between them using the website selector in the top navigation or group them for easier management.",
+        "category": "setup"
+    },
+    {
+        "question": "What are contact persons?",
+        "answer": "Contact persons are the points of contact for your websites. Manage them in 'CONTACT PERSONS' to ensure proper communication for link placements.",
+        "category": "setup"
+    },
+    {
+        "question": "How do I export my data?",
+        "answer": "Most tables have an export button (usually a download icon). You can export link lists, orders, and analytics data in CSV or Excel format.",
+        "category": "features"
+    },
+    {
+        "question": "What is the pricing model?",
+        "answer": "Pricing varies by link quality, domain authority, and placement type. Browse the Link Portfolio to see current prices. Higher quality links cost more but provide better SEO value.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I track my SEO progress?",
+        "answer": "Use the Dashboard to monitor key metrics like domain authority growth, new backlinks acquired, and ranking improvements. Set up regular reports for detailed tracking.",
+        "category": "analytics"
+    },
+    {
+        "question": "What if I need custom content?",
+        "answer": "Use the Content Hub to request custom-written content for your backlinks. Specify your requirements, target keywords, and any special instructions for the writers.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the calendar view?",
+        "answer": "The calendar in the Dashboard shows your link placements and publishing dates. Click on dates to see scheduled activities and track upcoming placements.",
+        "category": "features"
+    },
+    {
+        "question": "What are tags used for?",
+        "answer": "Tags help you organize and categorize your links, websites, and orders. Create custom tags in the Tags section and apply them for better organization and filtering.",
+        "category": "features"
+    },
+    {
+        "question": "How do I set up notifications?",
+        "answer": "Go to 'Account Settings' > 'Notifications' to configure email and in-app notifications for orders, link status changes, and important updates.",
+        "category": "account"
+    },
+    {
+        "question": "What is the minimum order amount?",
+        "answer": "There is no minimum order amount. You can purchase a single link or build large campaigns. However, some publishers may have minimum requirements.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I find links in my niche?",
+        "answer": "Use the niche filter in the Link Portfolio. Select your industry or topic to see relevant publishers. You can also search by keywords related to your niche.",
+        "category": "features"
+    },
+    {
+        "question": "What happens after I place an order?",
+        "answer": "After ordering, the publisher receives your request. They'll prepare the content and place the link. You'll receive updates via email and can track progress in Orders.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I change my password?",
+        "answer": "Click your avatar > 'Account Settings' > 'Security'. There you can change your password and manage other security settings.",
+        "category": "account"
+    },
+    {
+        "question": "What is the refund policy?",
+        "answer": "Refunds are available for failed link placements or if links go down within the guarantee period. Contact support to discuss your specific situation.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I add team members?",
+        "answer": "If you have a team plan, go to 'Account Settings' > 'Team Management' to invite new members and assign roles and permissions.",
+        "category": "account"
+    },
+    {
+        "question": "What browsers are supported?",
+        "answer": "The platform works best with modern browsers like Chrome, Firefox, Safari, and Edge. Make sure your browser is updated for the best experience.",
+        "category": "support"
+    },
+    {
+        "question": "How do I view my account balance?",
+        "answer": "Your account balance is displayed in the top navigation bar. You can also view detailed billing history in 'Account Settings' > 'Billing'.",
+        "category": "account"
+    },
+    {
+        "question": "What is the Link Checker?",
+        "answer": "The Link Checker monitors the status of all your purchased links. It checks for broken links, updates status, and alerts you to any issues with your backlinks.",
+        "category": "monitoring"
+    },
+    {
+        "question": "How do I create a new project?",
+        "answer": "In the Projects section, click 'Add New Project'. Enter your project details including target keywords, competitors, and goals to get personalized link suggestions.",
+        "category": "setup"
+    },
+    {
+        "question": "What are saved filters?",
+        "answer": "Saved filters allow you to save your favorite filter combinations in the Link Portfolio. Access them quickly without re-applying the same filters each time.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the competitor analysis?",
+        "answer": "Enter a competitor's domain in the Competitor Analyzer. It will show their backlink profile, top linking domains, and anchor text distribution to help you identify opportunities.",
+        "category": "analytics"
+    },
+    {
+        "question": "What is the juice meter?",
+        "answer": "The juice meter visualizes the SEO value (link equity) of different domains. Higher juice indicates more valuable backlinks for your SEO efforts.",
+        "category": "analytics"
+    },
+    {
+        "question": "How do I request custom content?",
+        "answer": "In the Content Hub, click 'New Request'. Specify the topic, keywords, word count, and any special requirements. Our writers will create content tailored to your needs.",
+        "category": "features"
+    },
+    {
+        "question": "What are promo codes?",
+        "answer": "Promo codes provide discounts on link purchases. You can enter them during checkout. Check the Promotions section or contact support for current offers.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I view my link history?",
+        "answer": "Your complete link history is available in 'LINK CHECKER' > 'Link History'. This shows all links you've purchased, their performance, and status over time.",
+        "category": "monitoring"
+    },
+    {
+        "question": "What is the dashboard calendar?",
+        "answer": "The dashboard calendar shows your scheduled link placements, content deadlines, and important dates. Use it to plan your link building campaigns effectively.",
+        "category": "features"
+    },
+    {
+        "question": "How do I manage my tags?",
+        "answer": "Go to the Tags section in the sidebar. Here you can create, edit, and delete tags. Apply tags to organize your links, websites, and orders for better management.",
+        "category": "features"
+    },
+    {
+        "question": "What are contact persons used for?",
+        "answer": "Contact persons ensure proper communication during link placements. Add contact details for each website so publishers know who to reach out to.",
+        "category": "setup"
+    },
+    {
+        "question": "How do I view order details?",
+        "answer": "Click on any order in the Orders section to view detailed information including items purchased, status, payment details, and communication history.",
+        "category": "commerce"
+    },
+    {
+        "question": "What is the link comparison tool?",
+        "answer": "The link comparison tool allows you to compare different link opportunities side by side. Select multiple links and view their metrics, pricing, and features together.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use advanced filtering?",
+        "answer": "Click 'Advanced Filters' in the Link Portfolio. You can filter by multiple criteria simultaneously including DA range, price, niche, language, and publisher metrics.",
+        "category": "features"
+    },
+    {
+        "question": "What are niches in the platform?",
+        "answer": "Niches categorize websites by industry or topic. Use niche filters to find links from publishers in your specific industry for more relevant backlinks.",
+        "category": "education"
+    },
+    {
+        "question": "How do I track link performance?",
+        "answer": "Use the analytics in your Dashboard to track link performance metrics like domain authority growth, new backlinks, and ranking improvements over time.",
+        "category": "analytics"
+    },
+    {
+        "question": "What is the widget dashboard?",
+        "answer": "The widget dashboard allows you to customize your dashboard view with different charts, metrics, and widgets that are most relevant to your link building goals.",
+        "category": "features"
+    },
+    {
+        "question": "How do I manage my wish list?",
+        "answer": "Add links to your wish list by clicking the heart icon while browsing. Access your saved links from the Wish List section to review and purchase later.",
+        "category": "features"
+    },
+    {
+        "question": "What are planned dates?",
+        "answer": "Planned dates show when your links are scheduled for placement. You can view and manage these dates in the Orders section and calendar view.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the link tree view?",
+        "answer": "The link tree visualizes your backlink network structure. It shows how links connect through different domains and helps you understand your link ecosystem.",
+        "category": "analytics"
+    },
+    {
+        "question": "What is the content editor?",
+        "answer": "The content editor allows you to review and edit custom content before it's published. You can make changes, approve drafts, or request revisions from writers.",
+        "category": "features"
+    },
+    {
+        "question": "How do I view my commission history?",
+        "answer": "Your commission history is available in 'Account Settings' > 'Commissions'. It shows earnings from referrals and affiliate programs if you're enrolled.",
+        "category": "account"
+    },
+    {
+        "question": "What are groups in the platform?",
+        "answer": "Groups allow you to organize your websites and projects into categories. Create groups to manage multiple related websites together for easier administration.",
+        "category": "setup"
+    },
+    {
+        "question": "How do I use the countries map?",
+        "answer": "The countries map shows the geographic distribution of your backlinks. Use it to ensure diverse link locations and identify opportunities in new regions.",
+        "category": "analytics"
+    },
+    {
+        "question": "What is the link sights feature?",
+        "answer": "Link Sights provides insights into link opportunities by analyzing competitor backlinks and suggesting similar opportunities for your website.",
+        "category": "features"
+    },
+    {
+        "question": "How do I manage my keywords?",
+        "answer": "Add and manage target keywords in your project settings. The platform uses these keywords to suggest relevant backlink opportunities and content topics.",
+        "category": "setup"
+    },
+    {
+        "question": "What are top content suggestions?",
+        "answer": "Top content suggestions are AI-generated content ideas based on trending topics in your niche. Use them to create high-value content for link building.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the speedometer widget?",
+        "answer": "The speedometer widget shows your link building velocity and progress toward your monthly goals. Green indicates good progress, red suggests you need to increase activity.",
+        "category": "analytics"
+    },
+    {
+        "question": "What is the meta description tool?",
+        "answer": "The meta description tool helps you optimize meta descriptions for better click-through rates from search results. It analyzes and suggests improvements.",
+        "category": "features"
+    },
+    {
+        "question": "How do I view my notifications?",
+        "answer": "Click the bell icon in the top navigation to view your notifications. Here you'll see alerts about orders, link status changes, and platform updates.",
+        "category": "features"
+    },
+    {
+        "question": "What are dynamic tags?",
+        "answer": "Dynamic tags are automatically generated tags based on link characteristics. They help you quickly identify and filter links by attributes like 'high DA' or 'branded anchor'.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the focus page selector?",
+        "answer": "The focus page selector allows you to choose specific pages on your website to target with backlinks. This helps concentrate link equity on your most important pages.",
+        "category": "setup"
+    },
+    {
+        "question": "What is the anchor type reclassifier?",
+        "answer": "The anchor type reclassifier helps you change the anchor text type for existing links. Use it when you want to modify how your links appear on publisher sites.",
+        "category": "features"
+    },
+    {
+        "question": "How do I view my currency rates?",
+        "answer": "Currency rates are displayed during checkout and in your billing settings. The platform supports multiple currencies for international users.",
+        "category": "commerce"
+    },
+    {
+        "question": "What are content lengths?",
+        "answer": "Content lengths refer to the word count options available when requesting custom content. Choose the appropriate length based on your link building needs.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the download file feature?",
+        "answer": "The download file feature allows you to export reports, link lists, and analytics data. Look for the download icon in tables and report sections.",
+        "category": "features"
+    },
+    {
+        "question": "What is the step-by-step form?",
+        "answer": "The step-by-step form guides you through complex processes like adding a new website or creating a large order. It breaks down the process into manageable steps.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the table actions?",
+        "answer": "Table actions provide bulk operations for managing multiple items. Select multiple rows and use the action menu to perform operations like bulk edit or delete.",
+        "category": "features"
+    },
+    {
+        "question": "What are trend icons?",
+        "answer": "Trend icons show the direction of your metrics over time. Up arrows indicate improvement, down arrows show decline, helping you track your SEO progress.",
+        "category": "analytics"
+    },
+    {
+        "question": "How do I manage my saved filters?",
+        "answer": "Create and save filter combinations in the Link Portfolio. Access them from the saved filters dropdown to quickly apply your favorite search criteria.",
+        "category": "features"
+    },
+    {
+        "question": "What is the URL with protocol tool?",
+        "answer": "The URL with protocol tool ensures all your website URLs include the proper http:// or https:// prefix. It helps maintain consistency in your project settings.",
+        "category": "setup"
+    },
+    {
+        "question": "How do I use the why button?",
+        "answer": "The why button provides explanations for platform features and metrics. Click it next to any confusing element to get detailed information about its purpose.",
+        "category": "education"
+    },
+    {
+        "question": "What are collection fields?",
+        "answer": "Collection fields are customizable form fields you can add to your website profiles. Use them to track additional information specific to your projects.",
+        "category": "setup"
+    },
+    {
+        "question": "How do I view my progress?",
+        "answer": "The progress component shows completion status for various tasks. Use it to track order fulfillment, content creation, and other multi-step processes.",
+        "category": "features"
+    },
+    {
+        "question": "What is the countdown timer?",
+        "answer": "The countdown timer shows time remaining for important events like link placements, renewals, or special offers. It helps you stay on top of deadlines.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the custom tool tip?",
+        "answer": "Custom tooltips provide additional information when you hover over elements. They explain features, metrics, and provide helpful tips throughout the platform.",
+        "category": "features"
+    },
+    {
+        "question": "What are status icons?",
+        "answer": "Status icons visually represent the state of your links, orders, and other items. Green indicates active/healthy, red indicates issues, yellow indicates pending.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the price renderer?",
+        "answer": "The price renderer formats and displays prices consistently across the platform. It handles currency conversion and shows pricing in your preferred format.",
+        "category": "commerce"
+    },
+    {
+        "question": "What is the price sign adder?",
+        "answer": "The price sign adder ensures currency symbols are properly displayed with prices. It automatically adds the correct symbol based on your selected currency.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I use the price currency component?",
+        "answer": "The price currency component displays prices with proper formatting and currency symbols. It automatically updates based on your account currency settings.",
+        "category": "commerce"
+    },
+    {
+        "question": "What are chart icons?",
+        "answer": "Chart icons represent different types of data visualizations available in your dashboard. Each icon corresponds to a specific chart type for displaying your metrics.",
+        "category": "analytics"
+    },
+    {
+        "question": "How do I use the chart card?",
+        "answer": "Chart cards display your key metrics in visual format. You can customize which metrics appear on your dashboard and how they're visualized.",
+        "category": "analytics"
+    },
+    {
+        "question": "What is the main chart header?",
+        "answer": "The main chart header provides context and controls for your dashboard charts. It includes date ranges, metric selectors, and chart type options.",
+        "category": "analytics"
+    },
+    {
+        "question": "How do I use the stat card?",
+        "answer": "Stat cards show key performance indicators at a glance. They display metrics like total links, domain authority, and monthly growth in easy-to-read format.",
+        "category": "analytics"
+    },
+    {
+        "question": "What are alerts in the platform?",
+        "answer": "Alerts notify you of important events like link failures, payment issues, or new opportunities. You can configure which alerts you want to receive.",
+        "category": "features"
+    },
+    {
+        "question": "How do I manage my messages?",
+        "answer": "The messages section contains communications from publishers, support, and the platform. Use it to stay updated on your orders and account activity.",
+        "category": "features"
+    },
+    {
+        "question": "What is the floating action button?",
+        "answer": "The floating action button provides quick access to common actions like adding new items or creating requests. It appears as a circular button in the interface.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the drawer component?",
+        "answer": "Drawers slide out from the side of the screen to show additional content or forms. They provide more space for detailed information without leaving the current page.",
+        "category": "features"
+    },
+    {
+        "question": "What are modals in the platform?",
+        "answer": "Modals are popup windows that appear over the current content. They're used for forms, confirmations, and detailed information without navigating away.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the loading component?",
+        "answer": "The loading component shows progress indicators while content is being loaded. It keeps users informed during wait times for better user experience.",
+        "category": "features"
+    },
+    {
+        "question": "What is the content skeleton?",
+        "answer": "Content skeletons show placeholder layouts while actual content loads. They improve perceived performance by giving users a preview of the page structure.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the icon title component?",
+        "answer": "Icon titles combine icons with text to create visually appealing headers. They help organize content and make sections easier to identify.",
+        "category": "features"
+    },
+    {
+        "question": "What is the default layout helmet?",
+        "answer": "The default layout helmet manages page metadata like titles and descriptions. It ensures proper SEO and social media sharing for each page.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the custom tag component?",
+        "answer": "Custom tags allow you to create and apply labels to organize your content. They're fully customizable and help with filtering and categorization.",
+        "category": "features"
+    },
+    {
+        "question": "What are editable table columns?",
+        "answer": "Editable table columns allow you to modify data directly in tables. Click on cells to edit values without opening separate forms.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the filters displayer?",
+        "answer": "The filters displayer shows all active filters and allows you to modify or remove them. It helps you understand what criteria are currently applied to your searches.",
+        "category": "features"
+    },
+    {
+        "question": "What is the insufficient balance component?",
+        "answer": "The insufficient balance component appears when you don't have enough funds for a purchase. It guides you to add funds or choose a different payment method.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I use the checkout form?",
+        "answer": "The checkout form collects payment and billing information. Fill in your details, select payment method, and review your order before completing the purchase.",
+        "category": "commerce"
+    },
+    {
+        "question": "What is the checkout summary?",
+        "answer": "The checkout summary shows a breakdown of your order including items, quantities, prices, and total cost. Review it carefully before completing payment.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I use the checkout alert?",
+        "answer": "Checkout alerts notify you of important information during the payment process, such as minimum orders or special conditions for certain links.",
+        "category": "commerce"
+    },
+    {
+        "question": "What is the checkout loading component?",
+        "answer": "The checkout loading component shows progress during payment processing. It keeps you informed while your transaction is being completed.",
+        "category": "commerce"
+    },
+    {
+        "question": "How do I use the card payment form?",
+        "answer": "The card payment form securely collects your credit card information. Enter your card details, billing address, and complete the payment.",
+        "category": "commerce"
+    },
+    {
+        "question": "What are landing pages?",
+        "answer": "Landing pages are dedicated pages for specific campaigns or offers. You can create and manage them to direct traffic from your backlinks.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the mobile view alert?",
+        "answer": "The mobile view alert notifies you when viewing the platform on mobile devices. Some features may have limited functionality on smaller screens.",
+        "category": "support"
+    },
+    {
+        "question": "What is the Pac-Man component?",
+        "answer": "The Pac-Man component is a fun loading animation that appears during certain processes. It provides visual feedback while operations complete.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the YouTube card?",
+        "answer": "YouTube cards display video content within the platform. They can be used for tutorials, explanations, or promotional content.",
+        "category": "features"
+    },
+    {
+        "question": "What is the tree legend?",
+        "answer": "The tree legend explains the symbols and colors used in link tree visualizations. It helps you understand the different types of connections in your backlink network.",
+        "category": "analytics"
+    },
+    {
+        "question": "How do I use the SVG icon component?",
+        "answer": "SVG icons provide scalable, crisp graphics throughout the platform. They're used for buttons, navigation, and visual elements.",
+        "category": "features"
+    },
+    {
+        "question": "What are core components?",
+        "answer": "Core components are the fundamental building blocks of the platform's interface. They include buttons, inputs, and other basic UI elements.",
+        "category": "features"
+    },
+    {
+        "question": "How do I use the nav header?",
+        "answer": "The nav header contains the main navigation elements including the logo, menu, search, and user account options.",
+        "category": "navigation"
+    },
+    {
+        "question": "What is the sidebar component?",
+        "answer": "The sidebar contains the main navigation menu with links to all platform sections. It can be collapsed or expanded for better screen usage.",
+        "category": "navigation"
+    },
+    {
+        "question": "How do I use the side bar?",
+        "answer": "The side bar provides quick access to all platform features. Click menu items to navigate or use the search to find specific sections.",
+        "category": "navigation"
+    },
+    {
+        "question": "How do I create a new account?",
+        "answer": "Visit our signup page at [website]/signup, enter your email, create a password, and click 'Create Account'. You'll receive a verification email - click the link to activate your account.",
+        "category": "Account Management"
+    },
+    {
+        "question": "I forgot my password. How can I reset it?",
+        "answer": "Click 'Forgot Password' on the login page, enter your email, and we'll send you a password reset link. The link expires in 2 hours for security.",
+        "category": "Account Management"
+    },
+    {
+        "question": "How do I change my account email address?",
+        "answer": "Go to Account Settings > Profile. Click 'Change Email', enter your new email and password to confirm. You'll receive a verification email to complete the change.",
+        "category": "Account Management"
+    },
+    {
+        "question": "How can I enable two-factor authentication?",
+        "answer": "In Account Settings > Security, click 'Enable 2FA'. Scan the QR code with an authenticator app like Google Authenticator, then enter the generated code to complete setup.",
+        "category": "Account Management"
+    },
+    {
+        "question": "How do I update my profile picture?",
+        "answer": "Click your profile icon > Edit Profile > click on your current picture. You can upload a new image (JPG or PNG, max 5MB). Don't forget to click 'Save'.",
+        "category": "Account Management"
+    },
+    {
+        "question": "How do I change my notification preferences?",
+        "answer": "Go to Account Settings > Notifications. Toggle the switches for email and in-app notifications for different activities like mentions, comments, and updates.",
+        "category": "Account Management"
+    },
+    {
+        "question": "Why am I not receiving email notifications?",
+        "answer": "First, check your spam/junk folder. Then verify your notification settings in Account Settings > Notifications. Ensure your email address is correct in your profile.",
+        "category": "Account Management"
+    },
+    {
+        "question": "How do I delete my account?",
+        "answer": "Go to Account Settings > Advanced > Delete Account. Be aware this action is permanent and will delete all your data. You'll be asked to confirm your password.",
+        "category": "Account Management"
+    },
+    {
+        "question": "Can I change my account type?",
+        "answer": "Yes, go to Account Settings > Subscription. Click 'Change Plan' to see available options. Some changes may require payment information.",
+        "category": "Account Management"
+    },
+    {
+        "question": "How do I update my timezone?",
+        "answer": "Go to Account Settings > Preferences. Select your timezone from the dropdown menu and click 'Save'. This affects due dates and notifications.",
+        "category": "Account Management"
+    },
+    {
+        "question": "How do I add a new link?",
+        "answer": "Click the '+ Add Link' button, paste your URL, add a title and description, then click 'Save'. You can also add tags for better organization.",
+        "category": "Link Management"
+    },
+    {
+        "question": "How can I edit multiple links at once?",
+        "answer": "Select the checkboxes next to the links you want to edit, then click 'Bulk Edit'. Make your changes and click 'Apply to All' to save.",
+        "category": "Link Management"
+    },
+    {
+        "question": "What's the best way to organize my links?",
+        "answer": "Use folders and tags. Create folders for broad categories and use tags for more specific grouping. For example, tag links as 'social-media' or 'competitors'.",
+        "category": "Link Management"
+    },
+    {
+        "question": "How do I import links from a CSV file?",
+        "answer": "Go to Links > Import > CSV. Download our template, fill in your links, then upload the file. The system will guide you through matching columns.",
+        "category": "Link Management"
+    },
+    {
+        "question": "Can I share a collection of links with my team?",
+        "answer": "Yes, select the links, click 'Share', then choose team members or generate a shareable link. You can set view or edit permissions.",
+        "category": "Link Management"
+    },
+    {
+        "question": "How do I find a specific link?",
+        "answer": "Use the search bar at the top. You can search by URL, title, or tags. Use quotes for exact matches or filters like 'tag:marketing' to narrow results.",
+        "category": "Link Management"
+    },
+    {
+        "question": "What's the difference between archiving and deleting a link?",
+        "answer": "Archiving removes the link from your main view but keeps it in your account. Deletion is permanent. You can find archived links in the 'Archived' section.",
+        "category": "Link Management"
+    },
+    {
+        "question": "How do I add notes to a link?",
+        "answer": "Open the link details and click 'Add Note'. You can format text, add bullet points, and mention team members with @username.",
+        "category": "Link Management"
+    },
+    {
+        "question": "Can I set an expiration date for a link?",
+        "answer": "Yes, when adding or editing a link, look for the 'Expiration' option. Set a date and the link will be automatically archived on that date.",
+        "category": "Link Management"
+    },
+    {
+        "question": "How do I export my links?",
+        "answer": "Go to Links > Export. Choose your format (CSV, Excel, or PDF), select which fields to include, then click 'Export'. You'll receive an email when it's ready.",
+        "category": "Link Management"
+    },
+    {
+        "question": "How do I create a new project?",
+        "answer": "Click 'New Project', enter a name and description, then click 'Create'. You can add team members and set permissions during or after creation.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "How do I invite team members to a project?",
+        "answer": "Open the project, click 'Team' > 'Invite Members'. Enter their email and choose their role (Viewer, Editor, or Admin). They'll receive an email invitation.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "What's the difference between project roles?",
+        "answer": "Viewers can only view content. Editors can add/edit content but can't change settings. Admins have full control, including adding/removing members and changing settings.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "How do I organize projects into folders?",
+        "answer": "Click 'New' > 'Folder', name it, then drag and drop projects into it. You can create nested folders for better organization.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "Can I duplicate a project?",
+        "answer": "Yes, open the project, click the three dots menu, and select 'Duplicate'. Choose what to include (tasks, files, etc.) and give it a new name.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "How do I set a project deadline?",
+        "answer": "Open the project, click 'Edit', then set the due date. Team members will be notified as the deadline approaches.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "How do I see all my tasks across projects?",
+        "answer": "Click 'My Tasks' in the sidebar. You can filter by due date, project, or assignee to find what you need.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "Can I customize the project view?",
+        "answer": "Yes, switch between list, board, or calendar views using the icons at the top. You can also create custom views with your preferred filters and sorting.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "How do I archive a completed project?",
+        "answer": "Open the project, click the three dots menu, and select 'Archive'. Archived projects are moved to the 'Archived' section where you can restore them if needed.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "How do I track project progress?",
+        "answer": "The project dashboard shows overall progress, upcoming deadlines, and task completion rates. You can also set milestones to track key achievements.",
+        "category": "Projects & Workspaces"
+    },
+    {
+        "question": "How do I view my link click statistics?",
+        "answer": "Go to Analytics > Links. You'll see a dashboard with total clicks, unique visitors, and other metrics. Use the date picker to adjust the time period.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "What's the difference between clicks and unique visitors?",
+        "answer": "'Clicks' counts every time a link is clicked, while 'Unique Visitors' counts each person only once, even if they click multiple times. This helps distinguish between many clicks from one person versus clicks from many people.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "How do I export my analytics data?",
+        "answer": "Go to the report you want to export, click 'Export', then choose your format (CSV, Excel, or PDF). Select the date range and click 'Export'.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "Can I see which countries my visitors are from?",
+        "answer": "Yes, go to Analytics > Locations. The map and table show where your visitors are located, along with click counts per country.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "How do I track conversions?",
+        "answer": "Set up conversion tracking in Settings > Goals. Define what counts as a conversion (like a thank you page visit) and the system will track how many link clicks lead to conversions.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "What's a good click-through rate (CTR)?",
+        "answer": "Average CTR varies by industry, but 2-5% is typical for most campaigns. Focus on improving your own CTR over time rather than comparing to others.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "How do I compare performance over time?",
+        "answer": "Use the date range comparison tool. Select your main date range, then check 'Compare to previous period' to see percentage changes.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "Can I see which devices my visitors use?",
+        "answer": "Yes, go to Analytics > Devices. You'll see a breakdown of desktop, mobile, and tablet traffic, along with performance metrics for each.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "How do I track UTM parameters?",
+        "answer": "Add UTM parameters to your URLs (utm_source, utm_medium, utm_campaign). The system will automatically track them. View the data in Analytics > Campaigns.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "What's the best way to share reports with my team?",
+        "answer": "Use the 'Share' button on any report to generate a link or schedule automatic email reports. You can control whether recipients can edit or just view the report.",
+        "category": "Analytics & Reporting"
+    },
+    {
+        "question": "How do I update my credit card?",
+        "answer": "Go to Billing > Payment Methods. Click 'Add New Card', enter your details, then set it as default. The old card will be kept on file unless you delete it.",
+        "category": "Billing & Payments"
+    },
+    {
+        "question": "Where can I download my invoices?",
+        "answer": "Go to Billing > Invoices. Click the download icon next to any invoice to get a PDF. You can also filter by date range or status.",
+        "category": "Billing & Payments"
+    },
+    {
+        "question": "How do I change my subscription plan?",
+        "answer": "Go to Billing > Plans. Select your desired plan and click 'Change Plan'. The new plan will start at your next billing cycle.",
+        "category": "Billing & Payments"
+    },
+    {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit cards (Visa, Mastercard, American Express, Discover) and PayPal. Some regions may have additional options available.",
+        "category": "Billing & Payments"
+    },
+    {
+        "question": "How do I cancel my subscription?",
+        "answer": "Go to Billing > Subscription > Cancel Plan. You can choose to cancel immediately or at the end of your billing period. You'll continue to have access until the period ends.",
+        "category": "Billing & Payments"
+    },
+    {
+        "question": "Why can't I log in?",
+        "answer": "First, check if Caps Lock is on. If you've forgotten your password, use the 'Forgot Password' link. Still having trouble? Try clearing your browser cache or using a different browser.",
+        "category": "Troubleshooting"
+    },
+    {
+        "question": "Why aren't my links tracking clicks?",
+        "answer": "1) Ensure the link is active and correct 2) Check if the link has been shared yet 3) Some ad blockers may prevent tracking. Try disabling them or test in an incognito window.",
+        "category": "Troubleshooting"
+    },
+    {
+        "question": "Why is my report showing no data?",
+        "answer": "Check your date range - it might be set to a period with no activity. Also verify your filters aren't too restrictive. If the issue persists, contact support.",
+        "category": "Troubleshooting"
+    },
+    {
+        "question": "Why am I getting an 'Access Denied' error?",
+        "answer": "This usually means you don't have permission to view the requested content. Check with your team admin to adjust your permissions if needed.",
+        "category": "Troubleshooting"
+    },
+    {
+        "question": "Why is the page loading slowly?",
+        "answer": "Try refreshing the page. If that doesn't help, check your internet connection. You can also try clearing your browser cache or using a different browser.",
+        "category": "Troubleshooting"
+    },
+    {
+        "question": "Test",
+        "answer": "Test",
+        "category": "Test"
+    }
+]
