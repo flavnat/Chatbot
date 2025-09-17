@@ -5,7 +5,8 @@ A production-ready chatbot with Retrieval-Augmented Generation (RAG) using MERN 
 ## Features
 
 - Multi-LLM Support: Google Gemini, OpenAI GPT, DeepSeek
-- RAG Pipeline: Haystack + Qdrant vector database
+- RAG Pipeline: Haystack framework for document processing and retrieval
+- Vector Database: Qdrant for efficient similarity search
 - Real-time Chat: WebSocket-based conversations
 - Document Training: Automatic knowledge base updates
 - Admin Dashboard: Chat statistics and management
