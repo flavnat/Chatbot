@@ -963,10 +963,5 @@
         "question": "Why is the page loading slowly?",
         "answer": "Try refreshing the page. If that doesn't help, check your internet connection. You can also try clearing your browser cache or using a different browser.",
         "category": "Troubleshooting"
-    },
-    {
-        "question": "Test",
-        "answer": "Test",
-        "category": "Test"
     }
 ]

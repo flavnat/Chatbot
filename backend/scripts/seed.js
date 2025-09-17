@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * Database seeding script
+ * Vector Database seeding script
  * Populates the knowledge base with sample documents
  */
 
-const mongoose = require("mongoose");
 const config = require("../src/config");
 const logger = require("../src/utils/logger");
 const pythonProcessManager = require("../src/utils/pythonProcessManager");
@@ -12,73 +11,46 @@ const pythonProcessManager = require("../src/utils/pythonProcessManager");
 const sampleDocuments = [
     {
         content:
-            "Machine learning is a subset of artificial intelligence (AI) that enables computers to learn and improve from experience without being explicitly programmed. It focuses on developing algorithms that can access data and use it to learn for themselves.",
+            "Link building is a crucial SEO strategy that involves acquiring high-quality backlinks from authoritative websites to improve search engine rankings and domain authority. Effective link building requires outreach, content creation, and relationship building with other website owners.",
         meta: {
-            topic: "Machine Learning",
-            category: "AI Fundamentals",
+            topic: "Link Building",
+            category: "SEO Strategy",
             source: "seed_data",
         },
     },
     {
         content:
-            "Deep learning is a subset of machine learning that uses neural networks with multiple layers to model complex patterns in data. It's particularly effective for tasks like image recognition, natural language processing, and speech recognition.",
+            "Domain Authority (DA) is a metric developed by Moz that predicts how well a website will rank on search engines. It ranges from 0 to 100, with higher scores indicating stronger ranking potential. DA is influenced by factors like backlink quality, content relevance, and site structure.",
         meta: {
-            topic: "Deep Learning",
-            category: "AI Fundamentals",
+            topic: "Domain Authority",
+            category: "SEO Metrics",
             source: "seed_data",
         },
     },
     {
         content:
-            "Natural Language Processing (NLP) is a field of AI that focuses on enabling computers to understand, interpret, and generate human language. It combines computational linguistics with statistical and machine learning models.",
+            "The Link Portfolio feature allows users to browse and purchase high-quality backlinks from verified publishers. Users can filter links by domain authority, price range, niche relevance, and anchor text type to find the most suitable opportunities for their SEO campaigns.",
         meta: {
-            topic: "Natural Language Processing",
-            category: "AI Applications",
+            topic: "Link Portfolio",
+            category: "Platform Features",
             source: "seed_data",
         },
     },
     {
         content:
-            "Retrieval-Augmented Generation (RAG) is a technique that combines the strengths of retrieval-based and generation-based approaches. It retrieves relevant information from a knowledge base and uses it to generate more accurate and contextually appropriate responses.",
+            "Content creation is essential for successful link building campaigns. High-quality, engaging content that provides value to readers naturally attracts backlinks. This includes blog posts, infographics, case studies, and resource pages that establish your website as an authority in your niche.",
         meta: {
-            topic: "RAG",
-            category: "AI Techniques",
+            topic: "Content Creation",
+            category: "Link Building Tactics",
             source: "seed_data",
         },
     },
     {
         content:
-            "Vector databases are specialized databases designed to store and query high-dimensional vectors efficiently. They use similarity search algorithms to find vectors that are most similar to a given query vector, making them essential for AI applications involving embeddings.",
+            "Link monitoring and maintenance ensures that acquired backlinks remain active and continue to provide SEO value. Regular check-ups help identify broken links, redirect issues, or deindexed pages that may negatively impact your link profile and search rankings.",
         meta: {
-            topic: "Vector Databases",
-            category: "Data Storage",
-            source: "seed_data",
-        },
-    },
-    {
-        content:
-            "Transformers are a type of neural network architecture introduced in 2017 that revolutionized natural language processing. They use self-attention mechanisms to process sequential data and have become the foundation for most modern language models.",
-        meta: {
-            topic: "Transformers",
-            category: "AI Architecture",
-            source: "seed_data",
-        },
-    },
-    {
-        content:
-            "Large Language Models (LLMs) are AI models trained on vast amounts of text data to understand and generate human-like text. They can perform various language tasks including translation, summarization, question answering, and creative writing.",
-        meta: {
-            topic: "Large Language Models",
-            category: "AI Models",
-            source: "seed_data",
-        },
-    },
-    {
-        content:
-            "Computer vision is a field of AI that trains computers to interpret and understand visual information from the world. It involves techniques for image recognition, object detection, image segmentation, and scene understanding.",
-        meta: {
-            topic: "Computer Vision",
-            category: "AI Applications",
+            topic: "Link Monitoring",
+            category: "SEO Maintenance",
             source: "seed_data",
         },
     },
@@ -92,17 +64,25 @@ async function seedDatabase() {
         await mongoose.connect(config.MONGODB_URI);
         logger.info("Connected to MongoDB");
 
-        // Clear existing documents (optional - comment out if you want to keep existing data)
-        logger.info("Clearing existing documents from knowledge base...");
-        await pythonProcessManager.executeScript("haystack_rag", ["index"]); // This will recreate the collection
-
-        // Add sample documents to the knowledge base
+        // Add sample documents to the knowledge base one by one
         logger.info(`Adding ${sampleDocuments.length} sample documents...`);
 
-        const result = await pythonProcessManager.executeScript("rag_chatbot", [
-            "add_docs",
-            ...sampleDocuments.map((doc) => doc.content),
-        ]);
+        let totalIndexed = 0;
+        for (const doc of sampleDocuments) {
+            const result = await pythonProcessManager.executeScript(
+                "rag_chatbot",
+                ["add_docs", doc.content]
+            );
+
+            if (result.error) {
+                throw new Error(result.error);
+            }
+
+            totalIndexed += result.documents_indexed || 1;
+            logger.info(`Added document: ${doc.meta.topic}`);
+        }
+
+        const result = { documents_indexed: totalIndexed, success: true };
 
         if (result.error) {
             throw new Error(result.error);
@@ -116,7 +96,7 @@ async function seedDatabase() {
 
         // Test retrieval with a sample query
         logger.info("Testing document retrieval...");
-        const testQuery = "What is machine learning?";
+        const testQuery = "What is link building?";
         const retrieveResult = await pythonProcessManager.executeScript(
             "haystack_rag",
             ["retrieve", testQuery, "3"]

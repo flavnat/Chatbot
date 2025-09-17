@@ -50,6 +50,19 @@ class HaystackRAG:
             # Initialize embedding model
             self.embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
+            # Create collection if it doesn't exist
+            try:
+                self.qdrant_client.get_collection(self.collection_name)
+                logger.info(f"Collection '{self.collection_name}' already exists")
+            except Exception:
+                # Create collection with proper vector configuration
+                from qdrant_client.models import VectorParams, Distance
+                self.qdrant_client.create_collection(
+                    collection_name=self.collection_name,
+                    vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+                )
+                logger.info(f"Created collection '{self.collection_name}'")
+
             logger.info("Qdrant RAG components initialized successfully")
 
         except ImportError as e:
@@ -58,36 +71,6 @@ class HaystackRAG:
             sys.exit(1)
         except Exception as e:
             logger.error(f"Failed to initialize components: {e}")
-            sys.exit(1)
-
-            # Create indexing pipeline
-            self.indexing_pipeline = Pipeline()
-            self.indexing_pipeline.add_component("embedder", SentenceTransformersDocumentEmbedder(
-                model="sentence-transformers/all-MiniLM-L6-v2"
-            ))
-            self.indexing_pipeline.add_component("writer", DocumentWriter(
-                document_store=self.document_store
-            ))
-            self.indexing_pipeline.connect("embedder", "writer")
-
-            # Create retrieval pipeline
-            self.retrieval_pipeline = Pipeline()
-            self.retrieval_pipeline.add_component("embedder", SentenceTransformersTextEmbedder(
-                model="sentence-transformers/all-MiniLM-L6-v2"
-            ))
-            self.retrieval_pipeline.add_component("retriever", QdrantEmbeddingRetriever(
-                document_store=self.document_store
-            ))
-            self.retrieval_pipeline.connect("embedder", "retriever")
-
-            logger.info("Haystack RAG pipeline initialized successfully")
-
-        except ImportError as e:
-            logger.error(f"Failed to import required libraries: {e}")
-            logger.error("Please install: pip install haystack-ai qdrant-haystack sentence-transformers")
-            sys.exit(1)
-        except Exception as e:
-            logger.error(f"Failed to initialize pipeline: {e}")
             sys.exit(1)
 
     def index_documents(self, documents: List[Dict[str, Any]]) -> Dict[str, Any]:
