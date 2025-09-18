@@ -65,81 +65,22 @@ def prepare_documents_for_indexing(data: List[Dict[str, Any]]) -> List[Dict[str,
     logger.info(f"Prepared {len(documents)} documents for indexing")
     return documents
 
-def index_documents_with_qdrant(documents: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Index documents directly using Qdrant client"""
+def index_documents_with_haystack(documents: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Index documents using Haystack RAG"""
     try:
-        from qdrant_client import QdrantClient
-        from qdrant_client.models import PointStruct, VectorParams, Distance
-        from sentence_transformers import SentenceTransformer
-        import numpy as np
+        from haystack_rag import HaystackRAG
 
-        # Get configuration
-        qdrant_url = os.getenv('QDRANT_URL', 'http://localhost:6333')
-        qdrant_api_key = os.getenv('QDRANT_API_KEY')
-        collection_name = os.getenv('QDRANT_COLLECTION_NAME', 'chatbot_doc')
+        # Initialize Haystack RAG
+        rag = HaystackRAG()
 
-        # Initialize Qdrant client
-        client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+        # Index documents
+        logger.info(f"Indexing {len(documents)} documents with Haystack...")
+        result = rag.index_documents(documents)
 
-        # Ensure collection exists
-        if not client.collection_exists(collection_name=collection_name):
-            client.create_collection(
-                collection_name=collection_name,
-                vectors_config=VectorParams(
-                    size=384,  # Matches all-MiniLM-L6-v2
-                    distance=Distance.COSINE
-                )
-            )
-            logger.info(f"Created collection '{collection_name}'")
-
-        # Initialize Qdrant client
-        if qdrant_api_key:
-            client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
-        else:
-            client = QdrantClient(url=qdrant_url)
-
-        # Initialize embedding model
-        model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-
-        from qdrant_client.models import PointStruct
-
-        # Prepare points for indexing
-        points = []
-        for i, doc in enumerate(documents):
-            # Generate embedding
-            embedding = model.encode(doc['content']).tolist()
-
-            # Create point using PointStruct
-            point = PointStruct(
-                id=i + 1,  # Use integer ID starting from 1
-                vector=embedding,
-                payload={
-                    'content': doc['content'],
-                    'meta': doc['meta']
-                }
-            )
-            points.append(point)
-
-        # Upload points to Qdrant in batches to avoid memory issues
-        batch_size = 100
-        for i in range(0, len(points), batch_size):
-            batch = points[i:i + batch_size]
-            client.upload_points(
-                collection_name=collection_name,
-                points=batch
-            )
-            logger.info(f"Uploaded batch {i//batch_size + 1} with {len(batch)} points")
-
-        logger.info(f"Successfully uploaded {len(points)} points to Qdrant")
-
-        return {
-            'success': True,
-            'documents_indexed': len(documents),
-            'message': f'Successfully indexed {len(documents)} documents'
-        }
+        return result
 
     except Exception as e:
-        logger.error(f"Error indexing documents with Qdrant: {e}")
+        logger.error(f"Error indexing documents with Haystack: {e}")
         return {
             'success': False,
             'error': str(e)
@@ -156,8 +97,8 @@ def main():
         # Prepare documents for indexing
         documents = prepare_documents_for_indexing(data)
 
-        # Index documents using Qdrant directly
-        result = index_documents_with_qdrant(documents)
+        # Index documents using Haystack RAG
+        result = index_documents_with_haystack(documents)
 
         if result['success']:
             logger.info(f"✅ Successfully indexed {result.get('documents_indexed', 0)} documents")

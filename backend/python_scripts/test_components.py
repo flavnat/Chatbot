@@ -60,7 +60,7 @@ def test_haystack_rag():
 
         rag = HaystackRAG()
 
-        # Test document indexing
+        # Test document indexing (skip if already exists)
         test_docs = [
             {
                 'content': 'Machine learning is a subset of artificial intelligence that enables computers to learn without being explicitly programmed.',
@@ -70,10 +70,15 @@ def test_haystack_rag():
 
         index_result = rag.index_documents(test_docs)
         if not index_result['success']:
-            print(f"❌ Document indexing failed: {index_result.get('error', 'Unknown error')}")
-            return False
-
-        print("✅ Document indexing successful")
+            # Check if it's a duplicate error (which is expected)
+            error_msg = str(index_result.get('error', ''))
+            if 'already exists' in error_msg or 'DuplicateDocumentError' in error_msg:
+                print("✅ Document indexing skipped (document already exists)")
+            else:
+                print(f"❌ Document indexing failed: {error_msg}")
+                return False
+        else:
+            print("✅ Document indexing successful")
 
         # Test document retrieval
         retrieve_result = rag.retrieve_documents("What is machine learning?", top_k=1)

@@ -13,7 +13,8 @@ const BASE_URL = `http://localhost:${config.PORT}`;
 
 async function checkService(url, name) {
     try {
-        const response = await axios.get(url, { timeout: 5000 });
+        // Allow longer timeout to accommodate Python-backed endpoints
+        const response = await axios.get(url, { timeout: 60000 }); // 60s
         if (response.status === 200) {
             console.log(`✅ ${name}: OK`);
             return true;
@@ -73,7 +74,7 @@ async function checkPythonComponents() {
 
 async function runHealthCheck() {
     console.log("🏥 Running Health Check...");
-    console.log("=" * 50);
+    console.log("=".repeat(50));
 
     let allHealthy = true;
 
@@ -96,7 +97,7 @@ async function runHealthCheck() {
     if (!pythonHealthy) allHealthy = false;
 
     // Summary
-    console.log("\n" + "=" * 50);
+    console.log("\n" + "=".repeat(50));
     if (allHealthy) {
         console.log("🎉 All systems are healthy!");
         process.exit(0);

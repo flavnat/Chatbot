@@ -72,7 +72,7 @@ const ChatPanel = styled.div`
 
 const ChatHeader = styled.div`
     padding: 12px;
-    background: black;
+    background: #253da7ff;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -261,7 +261,7 @@ const ChatBotWidget = () => {
             {isOpen && (
                 <ChatPanel>
                     <ChatHeader>
-                        <h3>Linkbuilder Chatbot</h3>
+                        <h3 style={{ fontWeight: "bold" }}>Linkbuilder</h3>
                         <div style={{ display: "flex", gap: "5px" }}>
                             <HeaderButton
                                 type="text"
