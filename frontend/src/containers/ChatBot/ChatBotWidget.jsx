@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Button, Input } from "antd";
 import {
-    MessageOutlined,
-    CloseOutlined,
-    SendOutlined,
     ClearOutlined,
+    CloseOutlined,
+    MessageOutlined,
+    SendOutlined,
 } from "@ant-design/icons";
-import styled, { keyframes } from "styled-components";
+import { Button, Input } from "antd";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { sendMessage, clearMessages } from "./actions";
+import { useDispatch, useSelector } from "react-redux";
+import styled, { keyframes } from "styled-components";
+import { clearMessages, sendMessage } from "./actions";
 
 const FloatingButton = styled(Button)`
     position: fixed;
@@ -17,14 +17,13 @@ const FloatingButton = styled(Button)`
     right: 20px;
     border-radius: 50%;
     scale: 1.2;
-    background: white;
-    border: 1px dashed black;
-    color: black;
+    background: #343750;
+    color: white;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
     transition: all 0.2s ease;
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -49,7 +48,13 @@ const ChatPanel = styled.div`
     width: 320px;
     height: 420px;
     background: white;
-    border: 1px dashed black;
+    /* background: radial-gradient(circle at 0% 0.8%, #e6f7ff 0%, transparent 76.2%),
+    radial-gradient(circle at 38.3% 76.3%, #f0f9ff 0%, transparent 53.3%),
+    radial-gradient(circle at 47.2% 85.6%, #fafafa 0%, transparent 43.4%),
+    radial-gradient(circle at 3.6% 10.1%, #ffffff 0%, transparent 64.4%),
+    radial-gradient(circle at 9.8% 98.3%, #f5f5f5 0%, transparent 43.4%),
+    radial-gradient(circle at 70.5% 28.2%, #fafafa 0%, transparent 34.5%),
+    #ffffff; */
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -72,12 +77,11 @@ const ChatPanel = styled.div`
 
 const ChatHeader = styled.div`
     padding: 12px;
-    background: #253da7ff;
+    background: #343750;
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px dashed white;
 
     h3 {
         margin: 0;
@@ -90,8 +94,30 @@ const ChatBody = styled.div`
     flex: 1;
     padding: 12px;
     overflow-y: auto;
-    background: white;
-    border-bottom: 1px dashed black;
+    background: inherit;
+`;
+
+const UserIcon = styled.div`
+    background-color: #1890ff;
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const Timestamp = styled.div`
+    font-size: 10px;
+    color: #888;
+    text-align: right;
+    margin-top: 4px;
+    ${(props) =>
+        props.sender === "user" ? "text-align: right;" : "text-align: left"}
 `;
 
 const ChatFooter = styled.div`
@@ -100,33 +126,67 @@ const ChatFooter = styled.div`
     display: flex;
     gap: 6px;
     align-items: center;
-    border-top: 1px dashed black;
 `;
 
 const MessageBubble = styled.div`
-    max-width: 75%;
+    max-width: 70%;
     padding: 8px 12px;
     font-size: 13px;
     line-height: 1.4;
     word-wrap: break-word;
-    margin-bottom: 6px;
-    border: 1px dashed black;
+    margin-bottom: 10px;
     border-radius: 8px;
     transition: all 0.2s ease;
 
     ${(props) =>
         props.sender === "user"
             ? `
-        background: black;
-        color: white;
+        background: #f2f8ff;
+        color: black;
         align-self: flex-end;
         margin-left: auto;
+        text-align: right;
     `
             : `
-        background: white;
+        background: #FFF1F0;
         color: black;
         align-self: flex-start;
     `}
+`;
+
+const BotMessageWrapper = styled.div`
+    display: flex;
+    align-items: start;
+    gap: 8px;
+    margin-bottom: 6px;
+    align-self: flex-start;
+`;
+
+const TypingMessageWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    align-self: flex-start;
+`;
+
+const BotIcon = styled.div`
+    background-color: white;
+    background-image: url("/logo.svg");
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+    font-size: 18px;
+    color: black;
+    flex-shrink: 0;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
 `;
 
 const MessagesContainer = styled.div`
@@ -146,11 +206,9 @@ const TypingIndicator = styled.div`
     gap: 4px;
     padding: 8px 12px;
     background: white;
-    border: 1px dashed black;
     border-radius: 8px;
-    align-self: flex-start;
+    align-self: flex-center;
     font-size: 12px;
-    color: black;
 
     .dot {
         width: 6px;
@@ -168,35 +226,30 @@ const TypingIndicator = styled.div`
 `;
 
 const StyledInput = styled(Input)`
-    border: 1px dashed black;
+    border: 1px solid #3aaaff;
     border-radius: 8px;
     font-size: 13px;
 
     &:focus,
     &:hover {
-        border-color: black;
+        border: 2px solid #3aaaff;
         box-shadow: none;
     }
 `;
 
-const HeaderButton = styled(Button)`
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: white;
-    border: 1px dashed black;
-    color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.2s ease;
+const HeaderCleanButton = styled(Button)`
+    color: #dfd9d9;
 
     &:hover {
-        background: white;
-        padding: 2px;
-        color: blue;
-        border: 2px dashed white;
+        color: #f6a1c7 !important;
+    }
+`;
+
+const HeaderCloseButton = styled(Button)`
+    color: #fae8f0;
+
+    &:hover {
+        color: #f6a1c7 !important;
     }
 `;
 
@@ -204,8 +257,7 @@ const SendButton = styled(Button)`
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: black;
-    border: 1px dashed black;
+    background: #3aaaff;
     color: white;
     display: flex;
     align-items: center;
@@ -217,6 +269,43 @@ const SendButton = styled(Button)`
         background: white;
         color: black;
     }
+`;
+
+const HeaderLogoCard = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+`;
+
+const IconWrapper = styled.div`
+    position: relative;
+    width: 32px;
+    height: 32px;
+`;
+
+const Icon = styled.img`
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+`;
+
+const ActiveIndicator = styled.div`
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    background: #4caf50;
+    border: 2px solid #3b4a60;
+    border-radius: 50%;
+`;
+
+const BotName = styled.h3`
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    color: white;
 `;
 
 const ChatBotWidget = () => {
@@ -251,27 +340,44 @@ const ChatBotWidget = () => {
         }
     };
 
+    const formatTime = (timestamp) => {
+        return new Date(timestamp).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
     return (
         <>
             <FloatingButton
                 type="primary"
-                icon={<MessageOutlined />}
+                icon={isOpen ? <CloseOutlined /> : <MessageOutlined />}
                 onClick={() => setIsOpen(!isOpen)}
             />
             {isOpen && (
                 <ChatPanel>
                     <ChatHeader>
-                        <h3 style={{ fontWeight: "bold" }}>Linkbuilder</h3>
-                        <div style={{ display: "flex", gap: "5px" }}>
-                            <HeaderButton
+                        <HeaderLogoCard>
+                            <IconWrapper>
+                                <Icon src="/logo.svg" alt="Bot Icon" />
+                                <ActiveIndicator />
+                            </IconWrapper>
+                            <BotName>LB Assistant</BotName>
+                        </HeaderLogoCard>
+                        <div style={{ display: "flex", gap: "2px" }}>
+                            <HeaderCleanButton
                                 type="text"
-                                icon={<ClearOutlined />}
+                                icon={
+                                    <ClearOutlined style={{ fontSize: 18 }} />
+                                }
                                 onClick={handleClear}
                                 title="Clear chat"
                             />
-                            <HeaderButton
+                            <HeaderCloseButton
                                 type="text"
-                                icon={<CloseOutlined />}
+                                icon={
+                                    <CloseOutlined style={{ fontSize: 18 }} />
+                                }
                                 onClick={() => setIsOpen(false)}
                             />
                         </div>
@@ -279,63 +385,152 @@ const ChatBotWidget = () => {
                     <ChatBody>
                         <MessagesContainer>
                             {messages.map((message) => (
-                                <MessageBubble
-                                    key={message.id}
-                                    sender={message.sender}
-                                >
-                                    <ReactMarkdown
-                                        components={{
-                                            p: ({ children }) => (
-                                                <span style={{ margin: 0 }}>
-                                                    {children}
-                                                </span>
-                                            ),
-                                            strong: ({ children }) => (
-                                                <strong
-                                                    style={{
-                                                        fontWeight: "bold",
+                                <div key={message.id}>
+                                    {message.sender === "user" ? (
+                                        <MessageBubble sender={message.sender}>
+                                            <ReactMarkdown
+                                                components={{
+                                                    p: ({ children }) => (
+                                                        <span
+                                                            style={{
+                                                                margin: 0,
+                                                            }}
+                                                        >
+                                                            {children}
+                                                        </span>
+                                                    ),
+                                                    strong: ({ children }) => (
+                                                        <strong
+                                                            style={{
+                                                                fontWeight:
+                                                                    "bold",
+                                                            }}
+                                                        >
+                                                            {children}
+                                                        </strong>
+                                                    ),
+                                                    ol: ({ children }) => (
+                                                        <ol
+                                                            style={{
+                                                                margin: "4px 0",
+                                                                paddingLeft:
+                                                                    "16px",
+                                                            }}
+                                                        >
+                                                            {children}
+                                                        </ol>
+                                                    ),
+                                                    ul: ({ children }) => (
+                                                        <ul
+                                                            style={{
+                                                                margin: "4px 0",
+                                                                paddingLeft:
+                                                                    "16px",
+                                                            }}
+                                                        >
+                                                            {children}
+                                                        </ul>
+                                                    ),
+                                                    li: ({ children }) => (
+                                                        <li
+                                                            style={{
+                                                                margin: "2px 0",
+                                                            }}
+                                                        >
+                                                            {children}
+                                                        </li>
+                                                    ),
+                                                }}
+                                            >
+                                                {message.text}
+                                            </ReactMarkdown>
+                                            <Timestamp sender="user">
+                                                {formatTime(message.timestamp)}
+                                            </Timestamp>
+                                        </MessageBubble>
+                                    ) : (
+                                        <BotMessageWrapper>
+                                            <BotIcon />
+                                            <MessageBubble
+                                                sender={message.sender}
+                                            >
+                                                <ReactMarkdown
+                                                    components={{
+                                                        p: ({ children }) => (
+                                                            <span
+                                                                style={{
+                                                                    margin: 0,
+                                                                }}
+                                                            >
+                                                                {children}
+                                                            </span>
+                                                        ),
+                                                        strong: ({
+                                                            children,
+                                                        }) => (
+                                                            <strong
+                                                                style={{
+                                                                    fontWeight:
+                                                                        "bold",
+                                                                }}
+                                                            >
+                                                                {children}
+                                                            </strong>
+                                                        ),
+                                                        ol: ({ children }) => (
+                                                            <ol
+                                                                style={{
+                                                                    margin: "4px 0",
+                                                                    paddingLeft:
+                                                                        "16px",
+                                                                }}
+                                                            >
+                                                                {children}
+                                                            </ol>
+                                                        ),
+                                                        ul: ({ children }) => (
+                                                            <ul
+                                                                style={{
+                                                                    margin: "4px 0",
+                                                                    paddingLeft:
+                                                                        "16px",
+                                                                }}
+                                                            >
+                                                                {children}
+                                                            </ul>
+                                                        ),
+                                                        li: ({ children }) => (
+                                                            <li
+                                                                style={{
+                                                                    margin: "2px 0",
+                                                                }}
+                                                            >
+                                                                {children}
+                                                            </li>
+                                                        ),
                                                     }}
                                                 >
-                                                    {children}
-                                                </strong>
-                                            ),
-                                            ol: ({ children }) => (
-                                                <ol
-                                                    style={{
-                                                        margin: "4px 0",
-                                                        paddingLeft: "16px",
-                                                    }}
-                                                >
-                                                    {children}
-                                                </ol>
-                                            ),
-                                            ul: ({ children }) => (
-                                                <ul
-                                                    style={{
-                                                        margin: "4px 0",
-                                                        paddingLeft: "16px",
-                                                    }}
-                                                >
-                                                    {children}
-                                                </ul>
-                                            ),
-                                            li: ({ children }) => (
-                                                <li style={{ margin: "2px 0" }}>
-                                                    {children}
-                                                </li>
-                                            ),
-                                        }}
-                                    >
-                                        {message.text}
-                                    </ReactMarkdown>
-                                </MessageBubble>
+                                                    {message.text}
+                                                </ReactMarkdown>
+                                                <Timestamp sender="bot">
+                                                    {formatTime(
+                                                        message.timestamp
+                                                    )}
+                                                </Timestamp>
+                                            </MessageBubble>
+                                        </BotMessageWrapper>
+                                    )}
+                                </div>
                             ))}
                             {typing && (
-                                <TypingIndicator>
-                                    <div className="dot"></div>
-                                    <div className="dot"></div>
-                                    <div className="dot"></div>
-                                </TypingIndicator>
+                                <TypingMessageWrapper>
+                                    <BotIcon />
+                                    <TypingIndicator>
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                    </TypingIndicator>
+                                </TypingMessageWrapper>
                             )}
                             <div ref={messagesEndRef} />
                         </MessagesContainer>
