@@ -46,6 +46,12 @@ pnpm install
 ### Configuration
 
 Create `backend/.env`:
+
+``` env
+cd backend
+cp .env.example .env
+```
+
 ```env
 NODE_ENV=development
 PORT=3000
