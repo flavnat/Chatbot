@@ -7,6 +7,7 @@
 const config = require("../src/config");
 const logger = require("../src/utils/logger");
 const pythonProcessManager = require("../src/utils/pythonProcessManager");
+const mongoose = require("mongoose");
 
 const sampleDocuments = [
     {
