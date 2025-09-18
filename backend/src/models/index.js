@@ -124,7 +124,6 @@ const userSchema = new mongoose.Schema({
 // Indexes
 chatMessageSchema.index({ sessionId: 1, timestamp: -1 });
 chatSessionSchema.index({ userId: 1, updatedAt: -1 });
-userSchema.index({ email: 1 });
 
 // Pre-save middleware
 chatSessionSchema.pre("save", function (next) {

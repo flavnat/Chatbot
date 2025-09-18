@@ -8,7 +8,7 @@ class PythonProcessManager {
     constructor() {
         this.activeProcesses = new Map();
         this.maxProcesses = 5;
-        this.processTimeout = 30000; // 30 seconds
+        this.processTimeout = 60000; // 60 seconds
     }
 
     /**
