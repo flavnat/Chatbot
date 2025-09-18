@@ -71,7 +71,7 @@ class RAGChatbot:
                     # Combine document contents for context
                     context_texts = [doc['content'] for doc in context_docs if doc['content']]
                     context_text = "\n\n".join(context_texts)
-
+            
             # Create enhanced prompt with context
             if context_text:
                 enhanced_prompt = f"""
