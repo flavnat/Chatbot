@@ -193,6 +193,7 @@ const MessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
 `;
 
 const bounce = keyframes`
@@ -314,12 +315,57 @@ const BotName = styled.h3`
   color: white;
 `;
 
+const SuggestedQuestionsContainer = styled.div`
+  padding: 12px;
+`;
+
+const SuggestedQuestionsGrid = styled.div`
+  display: grid;
+  gap: 8px;
+`;
+
+const SuggestedQuestionItem = styled.div`
+  padding: 8px 10px;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  margin-left: auto;
+  max-width: 200px;
+
+  &:hover {
+    background: #f0f8ff;
+    border-color: #3aaaff;
+    transform: translateY(-1px);
+  }
+`;
+
+const suggestedQuestions = [
+  "How can I get started?",
+  "What services do you offer?",
+  "Tell me about pricing",
+  "How do I contact support?",
+];
+
 const ChatBotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
   const { messages, typing } = useSelector((state) => state.chatBot);
   const messagesEndRef = useRef(null);
+
+  const [isFirstVisit, setIsFirstVisit] = useState(true);
+  const shouldShowSuggestedQuestions = () => {
+    return (
+      isFirstVisit &&
+      messages.length === 1 &&
+      messages[0]?.sender === "bot" &&
+      messages[0]?.text === "Hello! How can I help you today?"
+    );
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -333,17 +379,29 @@ const ChatBotWidget = () => {
     if (inputValue.trim()) {
       dispatch(sendMessage(inputValue.trim()));
       setInputValue("");
+      if (isFirstVisit) {
+        setIsFirstVisit(false);
+      }
     }
   };
 
   const handleClear = () => {
     dispatch(clearMessages());
+    // setIsFirstVisit(true);
+    setInputValue("");
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSend();
     }
+  };
+
+  const handleSuggestedQuestionClick = (question) => {
+    setInputValue(question);
+    dispatch(sendMessage(question));
+    setIsFirstVisit(false);
+    setInputValue("");
   };
 
   const formatTime = (timestamp) => {
@@ -394,13 +452,7 @@ const ChatBotWidget = () => {
                         <ReactMarkdown
                           components={{
                             p: ({ children }) => (
-                              <span
-                                style={{
-                                  margin: 0,
-                                }}
-                              >
-                                {children}
-                              </span>
+                              <span style={{ margin: 0 }}>{children}</span>
                             ),
                             strong: ({ children }) => (
                               <strong
@@ -432,13 +484,7 @@ const ChatBotWidget = () => {
                               </ul>
                             ),
                             li: ({ children }) => (
-                              <li
-                                style={{
-                                  margin: "2px 0",
-                                }}
-                              >
-                                {children}
-                              </li>
+                              <li style={{ margin: "2px 0" }}>{children}</li>
                             ),
                           }}
                         >
@@ -457,13 +503,7 @@ const ChatBotWidget = () => {
                           <ReactMarkdown
                             components={{
                               p: ({ children }) => (
-                                <span
-                                  style={{
-                                    margin: 0,
-                                  }}
-                                >
-                                  {children}
-                                </span>
+                                <span style={{ margin: 0 }}>{children}</span>
                               ),
                               strong: ({ children }) => (
                                 <strong
@@ -495,13 +535,7 @@ const ChatBotWidget = () => {
                                 </ul>
                               ),
                               li: ({ children }) => (
-                                <li
-                                  style={{
-                                    margin: "2px 0",
-                                  }}
-                                >
-                                  {children}
-                                </li>
+                                <li style={{ margin: "2px 0" }}>{children}</li>
                               ),
                             }}
                           >
@@ -528,6 +562,21 @@ const ChatBotWidget = () => {
               )}
               <div ref={messagesEndRef} />
             </MessagesContainer>
+            
+            {shouldShowSuggestedQuestions() && (
+              <SuggestedQuestionsContainer>
+                <SuggestedQuestionsGrid>
+                  {suggestedQuestions.map((question, index) => (
+                    <SuggestedQuestionItem
+                      key={index}
+                      onClick={() => handleSuggestedQuestionClick(question)}
+                    >
+                      {question}
+                    </SuggestedQuestionItem>
+                  ))}
+                </SuggestedQuestionsGrid>
+              </SuggestedQuestionsContainer>
+            )}
           </ChatBody>
           <ChatFooter>
             <StyledInput
