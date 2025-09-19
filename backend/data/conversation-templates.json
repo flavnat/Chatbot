@@ -1,0 +1,69 @@
+{
+  "greeting": {
+    "id": "greeting",
+    "name": "Greeting",
+    "description": "Start a friendly conversation",
+    "category": "general",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Hello! How can you help me today?"
+      }
+    ],
+    "tags": [
+      "greeting",
+      "introduction"
+    ]
+  },
+  "technical_help": {
+    "id": "technical_help",
+    "name": "Technical Support",
+    "description": "Get help with technical issues",
+    "category": "support",
+    "messages": [
+      {
+        "role": "user",
+        "content": "I need help with a technical issue. Can you assist me?"
+      }
+    ],
+    "tags": [
+      "technical",
+      "support",
+      "help"
+    ]
+  },
+  "product_info": {
+    "id": "product_info",
+    "name": "Product Information",
+    "description": "Learn about our products",
+    "category": "sales",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Can you tell me about your products and services?"
+      }
+    ],
+    "tags": [
+      "product",
+      "information",
+      "sales"
+    ]
+  },
+  "pricing": {
+    "id": "pricing",
+    "name": "Pricing Inquiry",
+    "description": "Ask about pricing and plans",
+    "category": "sales",
+    "messages": [
+      {
+        "role": "user",
+        "content": "What are your pricing plans?"
+      }
+    ],
+    "tags": [
+      "pricing",
+      "plans",
+      "cost"
+    ]
+  }
+}
