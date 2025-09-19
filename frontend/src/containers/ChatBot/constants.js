@@ -5,3 +5,5 @@ export const SET_TYPING = "app/ChatBot/SET_TYPING";
 export const SEND_MESSAGE_SUCCESS = "app/ChatBot/SEND_MESSAGE_SUCCESS";
 export const SEND_MESSAGE_ERROR = "app/ChatBot/SEND_MESSAGE_ERROR";
 export const CLEAR_MESSAGES = "app/ChatBot/CLEAR_MESSAGES";
+export const LOAD_MESSAGES_FROM_STORAGE =
+    "app/ChatBot/LOAD_MESSAGES_FROM_STORAGE";

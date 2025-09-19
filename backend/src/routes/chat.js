@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 const fs = require("fs").promises;
 const path = require("path");
@@ -8,9 +9,195 @@ const logger = require("../utils/logger");
 const { ChatMessage, ChatSession } = require("../models");
 const { sanitizeForVectorDB } = require("../utils/textSanitizer");
 
+// Import new utilities
+const QueryCache = require("../utils/query-cache");
+const RateLimiter = require("../utils/rate-limiter");
+const ConversationTemplates = require("../utils/conversation-templates");
+
+// Initialize utilities
+const queryCache = new QueryCache();
+const rateLimiter = new RateLimiter();
+const conversationTemplates = new ConversationTemplates();
+
 // Test route for debugging
 router.get("/test", (req, res) => {
     res.json({ success: true, message: "Chat routes are working" });
+});
+
+// Debug route to check database connection and messages
+router.get("/debug/messages", async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+
+        const messages = await ChatMessage.find({})
+            .sort({ timestamp: -1 })
+            .limit(limit)
+            .lean();
+
+        const sessions = await ChatSession.find({})
+            .sort({ updatedAt: -1 })
+            .limit(5)
+            .lean();
+
+        // Check MongoDB connection
+        const dbState = mongoose.connection.readyState;
+        const dbStates = {
+            0: "disconnected",
+            1: "connected",
+            2: "connecting",
+            3: "disconnecting",
+        };
+
+        res.json({
+            success: true,
+            database: {
+                state: dbStates[dbState],
+                name: mongoose.connection.name,
+                host: mongoose.connection.host,
+            },
+            messages: messages.map((msg) => ({
+                id: msg._id,
+                sessionId: msg.sessionId,
+                role: msg.role,
+                message: msg.message,
+                response: msg.response,
+                timestamp: msg.timestamp,
+                metadata: msg.metadata,
+            })),
+            sessions: sessions.map((sess) => ({
+                id: sess._id,
+                sessionId: sess.sessionId,
+                title: sess.title,
+                messageCount: sess.messageCount,
+                lastActivity: sess.lastActivity,
+                createdAt: sess.createdAt,
+            })),
+            totalMessages: await ChatMessage.countDocuments({}),
+            totalSessions: await ChatSession.countDocuments(),
+        });
+    } catch (error) {
+        logger.error("Debug route error:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message,
+            stack: error.stack,
+        });
+    }
+});
+
+// Debug route to check messages for a specific session
+router.get("/debug/messages/:sessionId", async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const messages = await ChatMessage.find({ sessionId })
+            .sort({ timestamp: -1 })
+            .limit(limit)
+            .lean();
+
+        const sessions = await ChatSession.find({})
+            .sort({ updatedAt: -1 })
+            .limit(5)
+            .lean();
+
+        // Check MongoDB connection
+        const dbState = mongoose.connection.readyState;
+        const dbStates = {
+            0: "disconnected",
+            1: "connected",
+            2: "connecting",
+            3: "disconnecting",
+        };
+
+        res.json({
+            success: true,
+            database: {
+                state: dbStates[dbState] || "unknown",
+                name: mongoose.connection.name,
+                host: mongoose.connection.host,
+            },
+            messages: messages.map((msg) => ({
+                id: msg._id,
+                sessionId: msg.sessionId,
+                role: msg.role,
+                message: msg.message,
+                response: msg.response,
+                timestamp: msg.timestamp,
+                metadata: msg.metadata,
+            })),
+            sessions: sessions.map((sess) => ({
+                id: sess._id,
+                sessionId: sess.sessionId,
+                title: sess.title,
+                messageCount: sess.messageCount,
+                lastActivity: sess.lastActivity,
+                createdAt: sess.createdAt,
+            })),
+            totalMessages: await ChatMessage.countDocuments({ sessionId }),
+            totalSessions: await ChatSession.countDocuments(),
+        });
+    } catch (error) {
+        logger.error("Debug route error:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message,
+            stack: error.stack,
+        });
+    }
+});
+
+// Manual test route to save a message
+router.post("/test-save", async (req, res) => {
+    try {
+        const { sessionId, message, role = "user" } = req.body;
+
+        if (!sessionId || !message) {
+            return res.status(400).json({
+                success: false,
+                error: "sessionId and message are required",
+            });
+        }
+
+        // Create test message
+        const testMessage = new ChatMessage({
+            sessionId,
+            role,
+            message: role === "user" ? message : undefined,
+            response: role === "assistant" ? message : undefined,
+            timestamp: new Date(),
+        });
+
+        await testMessage.save();
+
+        // Also create/update session
+        let session = await ChatSession.findOne({ sessionId });
+        if (!session) {
+            session = new ChatSession({
+                sessionId,
+                title: `Test Session - ${new Date().toISOString()}`,
+                messageCount: 0,
+                lastActivity: new Date(),
+            });
+        }
+        session.messageCount += 1;
+        session.lastActivity = new Date();
+        await session.save();
+
+        res.json({
+            success: true,
+            message: "Test message saved successfully",
+            messageId: testMessage._id,
+            sessionId: session.sessionId,
+        });
+    } catch (error) {
+        logger.error("Test save error:", error);
+        res.status(500).json({
+            success: false,
+            error: error.message,
+            stack: error.stack,
+        });
+    }
 });
 
 /**
@@ -20,6 +207,29 @@ router.get("/test", (req, res) => {
 router.post(
     "/message",
     [
+        // Rate limiting middleware
+        (req, res, next) => {
+            const clientIP =
+                req.ip || req.connection.remoteAddress || "unknown";
+            const rateLimitResult = rateLimiter.checkLimit(clientIP);
+
+            if (!rateLimitResult.allowed) {
+                return res.status(429).json({
+                    success: false,
+                    error: rateLimitResult.reason,
+                    retryAfter: rateLimitResult.remainingTime,
+                });
+            }
+
+            // Add rate limit info to response headers
+            res.set({
+                "X-RateLimit-Remaining": rateLimitResult.remainingRequests,
+                "X-RateLimit-Reset": rateLimitResult.resetTime,
+            });
+
+            next();
+        },
+        // Input validation
         body("message")
             .isLength({ min: 1, max: 2000 })
             .withMessage("Message must be 1-2000 characters"),
@@ -95,7 +305,22 @@ router.post(
                     messageCount: 0,
                     lastActivity: new Date(),
                 });
-                await session.save();
+
+                try {
+                    await session.save();
+                    logger.info("New chat session created", {
+                        sessionId: newSessionId,
+                    });
+                } catch (dbError) {
+                    logger.error("Failed to create chat session", {
+                        error: dbError.message,
+                        sessionId: newSessionId,
+                    });
+                    return res.status(500).json({
+                        success: false,
+                        error: "Failed to create chat session",
+                    });
+                }
             }
 
             // Save user message
@@ -105,51 +330,100 @@ router.post(
                 message: message,
                 timestamp: new Date(),
             });
-            await userMessage.save();
+
+            try {
+                await userMessage.save();
+                logger.info("User message saved to database", {
+                    sessionId: session.sessionId,
+                    messageId: userMessage._id,
+                });
+            } catch (dbError) {
+                logger.error("Failed to save user message to database", {
+                    error: dbError.message,
+                    sessionId: session.sessionId,
+                });
+                // Continue execution even if DB save fails
+            }
 
             // Update session
             session.messageCount += 1;
             session.lastActivity = new Date();
-            await session.save();
+
+            try {
+                await session.save();
+                logger.info("Session updated after user message", {
+                    sessionId: session.sessionId,
+                    messageCount: session.messageCount,
+                });
+            } catch (dbError) {
+                logger.error("Failed to update session after user message", {
+                    error: dbError.message,
+                    sessionId: session.sessionId,
+                });
+            }
 
             let aiResult;
 
-            // Choose implementation based on parameter
-            if (implementation === "javascript") {
-                // Use JavaScript RAG implementation
-                const JSRAGChatbot = require("../utils/js-rag-chatbot");
-                const jsChatbot = new JSRAGChatbot();
-
-                aiResult = await jsChatbot.generateResponse(
-                    message,
-                    provider,
-                    useRag,
-                    topK
-                );
-                aiResult.implementation = "javascript";
-
-                if (aiResult.error) {
-                    throw new Error(aiResult.error);
-                }
+            // Check cache first
+            const cachedResult = queryCache.get(
+                message,
+                provider,
+                useRag,
+                topK
+            );
+            if (cachedResult) {
+                logger.info("Using cached response", {
+                    cacheHits: cachedResult.cacheHits,
+                    cacheAge: cachedResult.cacheAge,
+                });
+                aiResult = {
+                    ...cachedResult,
+                    implementation: implementation,
+                    cached: true,
+                };
             } else {
-                // Use Python RAG implementation (default)
-                const pythonArgs = [
-                    "chat",
-                    message,
-                    provider,
-                    useRag.toString(),
-                    topK.toString(),
-                ];
+                // Generate new response
+                if (implementation === "javascript") {
+                    // Use new Conversational Chatbot
+                    const ConversationalChatbot = require("../utils/conversational-chatbot");
+                    const conversationalChatbot = new ConversationalChatbot();
 
-                aiResult = await pythonProcessManager.executeScript(
-                    "rag_chatbot",
-                    pythonArgs
-                );
-                aiResult.implementation = "python";
+                    aiResult = await conversationalChatbot.generateResponse(
+                        message,
+                        session.sessionId,
+                        provider,
+                        useRag,
+                        topK
+                    );
+                    aiResult.implementation = "javascript";
 
-                if (aiResult.error) {
-                    throw new Error(aiResult.error);
+                    if (aiResult.error) {
+                        throw new Error(aiResult.error);
+                    }
+                } else {
+                    // Use Python RAG implementation (default)
+                    const pythonArgs = [
+                        "chat",
+                        message,
+                        session.sessionId,
+                        provider,
+                        useRag.toString(),
+                        topK.toString(),
+                    ];
+
+                    aiResult = await pythonProcessManager.executeScript(
+                        "rag_chatbot",
+                        pythonArgs
+                    );
+                    aiResult.implementation = "python";
+
+                    if (aiResult.error) {
+                        throw new Error(aiResult.error);
+                    }
                 }
+
+                // Cache the result
+                queryCache.set(message, provider, useRag, topK, aiResult);
             }
 
             // Save AI response
@@ -173,11 +447,39 @@ router.post(
                 },
                 timestamp: new Date(),
             });
-            await aiMessage.save();
+
+            try {
+                await aiMessage.save();
+                logger.info("AI message saved to database", {
+                    sessionId: session.sessionId,
+                    messageId: aiMessage._id,
+                    provider: aiResult.provider,
+                });
+            } catch (dbError) {
+                logger.error("Failed to save AI message to database", {
+                    error: dbError.message,
+                    sessionId: session.sessionId,
+                    provider: aiResult.provider,
+                });
+                // Continue execution even if DB save fails
+            }
 
             // Update session message count
             session.messageCount += 1;
-            await session.save();
+            session.lastActivity = new Date();
+
+            try {
+                await session.save();
+                logger.info("Session updated after AI response", {
+                    sessionId: session.sessionId,
+                    messageCount: session.messageCount,
+                });
+            } catch (dbError) {
+                logger.error("Failed to update session after AI response", {
+                    error: dbError.message,
+                    sessionId: session.sessionId,
+                });
+            }
 
             // Return response
             res.json({
@@ -633,6 +935,113 @@ router.get("/stats", async (req, res) => {
         res.status(500).json({
             success: false,
             error: "Failed to fetch chatbot statistics",
+        });
+    }
+});
+
+/**
+ * GET /api/chat/templates
+ * Get all conversation templates
+ */
+router.get("/templates", async (req, res) => {
+    try {
+        const templates = conversationTemplates.getAllTemplates();
+        res.json({
+            success: true,
+            templates,
+        });
+    } catch (error) {
+        logger.error("Error fetching templates", { error: error.message });
+        res.status(500).json({
+            success: false,
+            error: "Failed to fetch conversation templates",
+        });
+    }
+});
+
+/**
+ * POST /api/chat/templates
+ * Create a new conversation template
+ */
+router.post(
+    "/templates",
+    [
+        body("name")
+            .isLength({ min: 1, max: 100 })
+            .withMessage("Name is required"),
+        body("description").optional().isLength({ max: 500 }),
+        body("category")
+            .isIn(["general", "support", "sales", "technical"])
+            .withMessage("Invalid category"),
+        body("messages")
+            .isArray({ min: 1 })
+            .withMessage("At least one message required"),
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    success: false,
+                    errors: errors.array(),
+                });
+            }
+
+            const template = await conversationTemplates.createTemplate(
+                req.body
+            );
+            res.json({
+                success: true,
+                template,
+            });
+        } catch (error) {
+            logger.error("Error creating template", { error: error.message });
+            res.status(500).json({
+                success: false,
+                error: "Failed to create conversation template",
+            });
+        }
+    }
+);
+
+/**
+ * GET /api/chat/cache/stats
+ * Get cache statistics
+ */
+router.get("/cache/stats", async (req, res) => {
+    try {
+        const stats = queryCache.getStats();
+        res.json({
+            success: true,
+            cache: stats,
+        });
+    } catch (error) {
+        logger.error("Error fetching cache stats", { error: error.message });
+        res.status(500).json({
+            success: false,
+            error: "Failed to fetch cache statistics",
+        });
+    }
+});
+
+/**
+ * GET /api/chat/rate-limit/stats
+ * Get rate limiting statistics
+ */
+router.get("/rate-limit/stats", async (req, res) => {
+    try {
+        const stats = rateLimiter.getStats();
+        res.json({
+            success: true,
+            rateLimit: stats,
+        });
+    } catch (error) {
+        logger.error("Error fetching rate limit stats", {
+            error: error.message,
+        });
+        res.status(500).json({
+            success: false,
+            error: "Failed to fetch rate limit statistics",
         });
     }
 });
