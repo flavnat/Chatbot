@@ -39,6 +39,10 @@ router.post(
             .optional()
             .isInt({ min: 1, max: 10 })
             .withMessage("topK must be between 1 and 10"),
+        body("implementation")
+            .optional()
+            .isIn(["python", "javascript"])
+            .withMessage("Implementation must be 'python' or 'javascript'"),
     ],
     async (req, res) => {
         try {
@@ -57,12 +61,14 @@ router.post(
                 provider = "gemini",
                 useRag = true,
                 topK = 3,
+                implementation = "javascript",
             } = req.body;
 
             logger.info("Processing chat message", {
                 sessionId,
                 provider,
                 useRag,
+                implementation,
                 messageLength: message.length,
             });
 
@@ -106,22 +112,44 @@ router.post(
             session.lastActivity = new Date();
             await session.save();
 
-            // Generate AI response using Python RAG chatbot
-            const pythonArgs = [
-                "chat",
-                message,
-                provider,
-                useRag.toString(),
-                topK.toString(),
-            ];
+            let aiResult;
 
-            const aiResult = await pythonProcessManager.executeScript(
-                "rag_chatbot",
-                pythonArgs
-            );
+            // Choose implementation based on parameter
+            if (implementation === "javascript") {
+                // Use JavaScript RAG implementation
+                const JSRAGChatbot = require("../utils/js-rag-chatbot");
+                const jsChatbot = new JSRAGChatbot();
 
-            if (aiResult.error) {
-                throw new Error(aiResult.error);
+                aiResult = await jsChatbot.generateResponse(
+                    message,
+                    provider,
+                    useRag,
+                    topK
+                );
+                aiResult.implementation = "javascript";
+
+                if (aiResult.error) {
+                    throw new Error(aiResult.error);
+                }
+            } else {
+                // Use Python RAG implementation (default)
+                const pythonArgs = [
+                    "chat",
+                    message,
+                    provider,
+                    useRag.toString(),
+                    topK.toString(),
+                ];
+
+                aiResult = await pythonProcessManager.executeScript(
+                    "rag_chatbot",
+                    pythonArgs
+                );
+                aiResult.implementation = "python";
+
+                if (aiResult.error) {
+                    throw new Error(aiResult.error);
+                }
             }
 
             // Save AI response
@@ -133,8 +161,15 @@ router.post(
                     provider: aiResult.provider,
                     model: aiResult.model,
                     usage: aiResult.usage,
-                    ragUsed: aiResult.rag_used,
-                    contextDocuments: aiResult.context_documents,
+                    ragUsed:
+                        aiResult.ragUsed !== undefined
+                            ? aiResult.ragUsed
+                            : aiResult.rag_used,
+                    contextDocuments:
+                        aiResult.contextDocuments !== undefined
+                            ? aiResult.contextDocuments
+                            : aiResult.context_documents,
+                    implementation: aiResult.implementation,
                 },
                 timestamp: new Date(),
             });

@@ -204,37 +204,59 @@ class LLMFactory:
 
 def main():
     """Main entry point for command line usage"""
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         print(json.dumps({
-            'error': 'Usage: python llm_factory.py <provider> <prompt> [model] [max_tokens] [temperature]'
+            'error': 'Usage: python llm_factory.py <command> [args...]',
+            'commands': ['providers', 'generate']
         }))
         sys.exit(1)
 
-    provider = sys.argv[1]
-    prompt = sys.argv[2]
-    model = sys.argv[3] if len(sys.argv) > 3 else None
-    max_tokens = int(sys.argv[4]) if len(sys.argv) > 4 else 1000
-    temperature = float(sys.argv[5]) if len(sys.argv) > 5 else 0.7
+    command = sys.argv[1]
 
     try:
         factory = LLMFactory()
 
-        # Check if provider is available
-        available_providers = factory.get_available_providers()
-        if not available_providers.get(provider, False):
+        if command == 'providers':
+            # Get available providers
+            available_providers = factory.get_available_providers()
             print(json.dumps({
-                'error': f'Provider {provider} is not available',
+                'success': True,
                 'available_providers': available_providers
             }))
-            sys.exit(1)
 
-        # Generate response
-        kwargs = {'max_tokens': max_tokens, 'temperature': temperature}
-        if model:
-            kwargs['model'] = model
+        elif command == 'generate':
+            # python llm_factory.py generate <provider> <prompt> [model] [max_tokens] [temperature]
+            if len(sys.argv) < 4:
+                print(json.dumps({
+                    'error': 'Usage: python llm_factory.py generate <provider> <prompt> [model] [max_tokens] [temperature]'
+                }))
+                sys.exit(1)
 
-        result = factory.generate_response(provider, prompt, **kwargs)
-        print(json.dumps(result))
+            provider = sys.argv[2]
+            prompt = sys.argv[3]
+            model = sys.argv[4] if len(sys.argv) > 4 else None
+            max_tokens = int(sys.argv[5]) if len(sys.argv) > 5 else 1000
+            temperature = float(sys.argv[6]) if len(sys.argv) > 6 else 0.7
+
+            # Check if provider is available
+            available_providers = factory.get_available_providers()
+            if not available_providers.get(provider, False):
+                print(json.dumps({
+                    'error': f'Provider {provider} is not available',
+                    'available_providers': available_providers
+                }))
+                sys.exit(1)
+
+            # Generate response
+            kwargs = {'max_tokens': max_tokens, 'temperature': temperature}
+            if model:
+                kwargs['model'] = model
+
+            result = factory.generate_response(provider, prompt, **kwargs)
+            print(json.dumps(result))
+
+        else:
+            print(json.dumps({'error': f'Unknown command: {command}'}))
 
     except Exception as e:
         logger.error(f"Error in main: {e}")

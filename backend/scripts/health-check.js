@@ -8,6 +8,9 @@ const axios = require("axios");
 const config = require("../src/config");
 const logger = require("../src/utils/logger");
 const pythonProcessManager = require("../src/utils/pythonProcessManager");
+const JSRAGChatbot = require("../src/utils/js-rag-chatbot");
+const JSRAG = require("../src/utils/js-rag");
+const JSLLMFactory = require("../src/utils/js-llm-factory");
 
 const BASE_URL = `http://localhost:${config.PORT}`;
 
@@ -35,13 +38,13 @@ async function checkPythonComponents() {
         // Test LLM factory
         const llmResult = await pythonProcessManager.executeScript(
             "llm_factory",
-            ["gemini", "test"]
+            ["providers"]
         );
         if (llmResult.error) {
-            console.log(`❌ LLM Factory: ${llmResult.error}`);
+            console.log(`❌ Python LLM Factory: ${llmResult.error}`);
             return false;
         }
-        console.log("✅ LLM Factory: OK");
+        console.log("✅ Python LLM Factory: OK");
 
         // Test Haystack RAG
         const ragResult = await pythonProcessManager.executeScript(
@@ -49,10 +52,12 @@ async function checkPythonComponents() {
             ["count"]
         );
         if (ragResult.error) {
-            console.log(`❌ Haystack RAG: ${ragResult.error}`);
+            console.log(`❌ Python Haystack RAG: ${ragResult.error}`);
             return false;
         }
-        console.log(`✅ Haystack RAG: OK (${ragResult.count || 0} documents)`);
+        console.log(
+            `✅ Python Haystack RAG: OK (${ragResult.count || 0} documents)`
+        );
 
         // Test RAG Chatbot
         const chatbotResult = await pythonProcessManager.executeScript(
@@ -60,14 +65,68 @@ async function checkPythonComponents() {
             ["stats"]
         );
         if (chatbotResult.error) {
-            console.log(`❌ RAG Chatbot: ${chatbotResult.error}`);
+            console.log(`❌ Python RAG Chatbot: ${chatbotResult.error}`);
             return false;
         }
-        console.log("✅ RAG Chatbot: OK");
+        console.log("✅ Python RAG Chatbot: OK");
 
         return true;
     } catch (error) {
         console.log(`❌ Python components check failed: ${error.message}`);
+        return false;
+    }
+}
+
+async function checkJavaScriptComponents() {
+    try {
+        console.log("🔍 Checking JavaScript components...");
+
+        // Test JS LLM Factory
+        const jsLLMFactory = new JSLLMFactory();
+        const availableProviders = jsLLMFactory.getAvailableProviders();
+        const availableCount =
+            Object.values(availableProviders).filter(Boolean).length;
+
+        if (availableCount === 0) {
+            console.log("❌ JS LLM Factory: No providers available");
+            return false;
+        }
+        console.log(
+            `✅ JS LLM Factory: OK (${availableCount} providers available)`
+        );
+
+        // Test JS RAG Pipeline
+        const jsRAG = new JSRAG();
+        await jsRAG.initialize();
+
+        const countResult = await jsRAG.getDocumentCount();
+        if (!countResult.success) {
+            console.log(`❌ JS RAG Pipeline: ${countResult.error}`);
+            return false;
+        }
+        console.log(`✅ JS RAG Pipeline: OK (${countResult.count} documents)`);
+
+        // Test JS RAG Chatbot
+        const jsChatbot = new JSRAGChatbot();
+        await jsChatbot.initialize();
+
+        // Test a simple response generation
+        const testResponse = await jsChatbot.generateResponse(
+            "Hello",
+            "gemini",
+            false, // Don't use RAG for this simple test
+            1
+        );
+
+        if (testResponse.error) {
+            console.log(`❌ JS RAG Chatbot: ${testResponse.error}`);
+            return false;
+        }
+        console.log("✅ JS RAG Chatbot: OK");
+
+        return true;
+    } catch (error) {
+        console.log(`❌ JavaScript components check failed: ${error.message}`);
         return false;
     }
 }
@@ -95,6 +154,11 @@ async function runHealthCheck() {
     console.log("\n🐍 Checking Python components...");
     const pythonHealthy = await checkPythonComponents();
     if (!pythonHealthy) allHealthy = false;
+
+    // Check JavaScript components
+    console.log("\n🔹 Checking JavaScript components...");
+    const jsHealthy = await checkJavaScriptComponents();
+    if (!jsHealthy) allHealthy = false;
 
     // Summary
     console.log("\n" + "=".repeat(50));

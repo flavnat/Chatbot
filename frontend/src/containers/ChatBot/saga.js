@@ -8,7 +8,7 @@ import {
 } from "./actions";
 import { chatService } from "../../services/chatService";
 
-function* handleSendMessage(action) {
+export function* handleSendMessage(action) {
     let retryCount = 0;
     const maxRetries = 2;
 
@@ -96,9 +96,7 @@ function* handleSendMessage(action) {
 
                 if (shouldRetry) {
                     retryCount++;
-                    // Hide typing briefly before retry
-                    yield put(setTyping(false));
-                    // Wait 2 seconds before retry
+                    // Wait 2 seconds before retry (keep typing indicator)
                     yield new Promise((resolve) => setTimeout(resolve, 2000));
                     continue; // Retry the loop
                 } else {
@@ -132,7 +130,7 @@ function* handleSendMessage(action) {
     }
 }
 
-function* handleSendBotMessage(action) {
+export function* handleSendBotMessage(action) {
     const botMessage = {
         id: Date.now(),
         text: action.payload,
