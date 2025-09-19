@@ -119,7 +119,7 @@ export const healthService = {
             console.error("Health check failed:", error);
             return {
                 success: false,
-                error: error.message,
+                error: error.response?.data?.message || error.message,
                 status: "unhealthy",
             };
         }

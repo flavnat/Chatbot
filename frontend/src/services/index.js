@@ -1,3 +1,15 @@
 // Export all services from a single entry point
-export { default as api } from "./api";
-export { chatService, healthService } from "./chatService";
+import api from "./api";
+import { chatService, healthService } from "./chatService";
+
+export { api };
+export { chatService, healthService };
+
+// Default export for convenience
+const services = {
+    api,
+    chat: chatService,
+    health: healthService,
+};
+
+export default services;
