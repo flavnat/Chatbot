@@ -5,6 +5,7 @@ import {
     SEND_MESSAGE_SUCCESS,
     SEND_MESSAGE_ERROR,
     CLEAR_MESSAGES,
+    LOAD_MESSAGES_FROM_STORAGE,
 } from "./constants";
 
 export const initialState = {
@@ -38,7 +39,12 @@ const chatBotReducer = (state = initialState, action) =>
                 draft.error = action.payload;
                 break;
             case CLEAR_MESSAGES:
-                draft.messages = [initialState.messages[0]]; // Keep the initial greeting
+                draft.messages = [initialState.messages[0]];
+                draft.sessionId = null;
+                draft.error = null;
+                break;
+            case LOAD_MESSAGES_FROM_STORAGE:
+                draft.messages = action.payload;
                 draft.sessionId = null;
                 draft.error = null;
                 break;
