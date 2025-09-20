@@ -98,6 +98,26 @@ export const chatService = {
             };
         }
     },
+
+    /**
+     * Get conversation templates
+     * @returns {Promise<Object>} Response with available templates
+     */
+    async getTemplates() {
+        try {
+            const response = await api.get("/chat/templates");
+            return {
+                success: true,
+                data: response.data,
+            };
+        } catch (error) {
+            console.error("Error fetching templates:", error);
+            return {
+                success: false,
+                error: error.message,
+            };
+        }
+    },
 };
 
 /**
@@ -121,26 +141,6 @@ export const healthService = {
                 success: false,
                 error: error.response?.data?.message || error.message,
                 status: "unhealthy",
-            };
-        }
-    },
-
-    /**
-     * Get API information
-     * @returns {Promise<Object>} API info
-     */
-    async getApiInfo() {
-        try {
-            const response = await api.get("/");
-            return {
-                success: true,
-                data: response.data,
-            };
-        } catch (error) {
-            console.error("Error fetching API info:", error);
-            return {
-                success: false,
-                error: error.response?.data?.message || error.message,
             };
         }
     },

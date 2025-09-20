@@ -375,12 +375,17 @@ const autoCompleteOptions = [
 
 // Get dynamic suggested questions from templates
 const getSuggestedQuestions = (templates) => {
-    if (!templates || templates.length === 0) {
-        return suggestedQuestions; // fallback to hardcoded
+    if (!Array.isArray(templates) || templates.length === 0) {
+        return suggestedQuestions;
     }
     return templates
         .slice(0, 4)
-        .map((template) => template.messages[0]?.content || template.name);
+        .map(
+            (template) =>
+                template.messages?.[0]?.content ||
+                template.name ||
+                "Ask me anything!"
+        );
 };
 
 // Smart suggestions based on context
@@ -490,9 +495,14 @@ const ChatBotWidget = () => {
             try {
                 _setTemplatesLoading(true);
                 const templateData = await chatService.getTemplates();
-                _setTemplates(templateData);
+                // Extract the templates array from the response
+                const templates = templateData.success
+                    ? templateData.data.templates
+                    : [];
+                _setTemplates(templates);
             } catch (error) {
                 console.error("Failed to fetch conversation templates:", error);
+                _setTemplates([]); // Set empty array on error
             } finally {
                 _setTemplatesLoading(false);
             }
