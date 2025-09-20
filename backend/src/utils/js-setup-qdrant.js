@@ -1,4 +1,4 @@
-#!const { QdrantClient } = require('@qdrant/js-client-rest');usr/bin/env node
+#!usr/bin/env node
 
 const { QdrantClient } = require("@qdrant/js-client-rest");
 const path = require("path");
@@ -22,9 +22,13 @@ async function createQdrantCollection() {
             client = new QdrantClient({
                 url: qdrantUrl,
                 apiKey: qdrantApiKey,
+                checkCompatibility: false,
             });
         } else {
-            client = new QdrantClient({ url: qdrantUrl });
+            client = new QdrantClient({
+                url: qdrantUrl,
+                checkCompatibility: false,
+            });
         }
 
         // Check if collection exists

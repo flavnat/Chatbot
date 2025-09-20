@@ -21,6 +21,7 @@ const config = {
 
     // Qdrant Configuration
     QDRANT_URL: process.env.QDRANT_URL,
+    QDRANT_MODE: process.env.QDRANT_MODE || "local", // "local" or "cloud"
     QDRANT_COLLECTION_NAME:
         process.env.QDRANT_COLLECTION_NAME || "chatbot_documents",
 
@@ -48,11 +49,15 @@ const config = {
     validate() {
         const required = [
             "GOOGLE_API_KEY",
-            "QDRANT_API_KEY",
             "OPENAI_API_KEY",
             "DEEPSEEK_API_KEY",
             "QDRANT_URL",
         ];
+
+        // Only require QDRANT_API_KEY for cloud mode
+        if (this.QDRANT_MODE === "cloud") {
+            required.push("QDRANT_API_KEY");
+        }
 
         const missing = required.filter((key) => !this[key]);
 

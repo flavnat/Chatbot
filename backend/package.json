@@ -10,7 +10,7 @@
         "test:python": "python3 python_scripts/test_components.py",
         "test:js": "node scripts/comparison-test.js",
         "test:compare": "node scripts/comparison-test.js",
-        "build": "npm run build",
+        "build": "echo 'Backend build complete - no build step required'",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "setup:python": "pip install -r python_scripts/requirements.txt",

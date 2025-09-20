@@ -13,6 +13,8 @@ const { sanitizeForVectorDB } = require("../utils/textSanitizer");
 const QueryCache = require("../utils/query-cache");
 const RateLimiter = require("../utils/rate-limiter");
 const ConversationTemplates = require("../utils/conversation-templates");
+const JSTrainer = require("../utils/js-trainer");
+const JSRAGChatbot = require("../utils/js-rag-chatbot");
 
 // Initialize utilities
 const queryCache = new QueryCache();
@@ -663,13 +665,15 @@ router.get("/documents", async (req, res) => {
  */
 router.get("/documents/train", async (req, res) => {
     try {
+        const { implementation = "javascript" } = req.query;
         const linkbuildersPath = path.join(
             __dirname,
             "../../data/linkbuilders.json"
         );
 
         logger.info(
-            "Starting automatic document training process (GET request)"
+            "Starting automatic document training process (GET request)",
+            { implementation }
         );
 
         // Step 1: Get all chat-generated documents
@@ -750,14 +754,27 @@ router.get("/documents/train", async (req, res) => {
             existingDocuments: existingData.length,
         });
 
-        // Step 7: Trigger the trainer script
-        const trainerResult = await pythonProcessManager.executeScript(
-            "trainer",
-            []
-        );
+        // Step 7: Trigger the trainer script based on implementation
+        let trainerResult;
+        if (implementation === "javascript") {
+            logger.info("Using JavaScript trainer for document indexing");
+            trainerResult = await JSTrainer.indexDocumentsWithJSRAG(
+                JSTrainer.prepareDocumentsForIndexing(updatedData)
+            );
+            trainerResult.implementation = "javascript";
+        } else {
+            logger.info("Using Python trainer for document indexing");
+            trainerResult = await pythonProcessManager.executeScript(
+                "trainer",
+                []
+            );
+            trainerResult.implementation = "python";
+        }
 
-        if (trainerResult.error) {
-            throw new Error(`Trainer failed: ${trainerResult.error}`);
+        if (trainerResult.error || !trainerResult.success) {
+            throw new Error(
+                `Trainer failed: ${trainerResult.error || "Unknown error"}`
+            );
         }
 
         res.json({
@@ -768,6 +785,7 @@ router.get("/documents/train", async (req, res) => {
             newDocumentsAdded: newChatDocuments.length,
             totalDocuments: updatedData.length,
             trainerResult: trainerResult,
+            implementation: implementation,
         });
     } catch (error) {
         logger.error("Error in automatic training process (GET)", {
@@ -787,12 +805,15 @@ router.get("/documents/train", async (req, res) => {
  */
 router.post("/documents/train", async (req, res) => {
     try {
+        const { implementation = "python" } = req.body;
         const linkbuildersPath = path.join(
             __dirname,
             "../../data/linkbuilders.json"
         );
 
-        logger.info("Starting automatic document training process");
+        logger.info("Starting automatic document training process", {
+            implementation,
+        });
 
         // Step 1: Get all chat-generated documents
         const userMessages = await ChatMessage.find({ role: "user" }).sort({
@@ -872,14 +893,27 @@ router.post("/documents/train", async (req, res) => {
             existingDocuments: existingData.length,
         });
 
-        // Step 7: Trigger the trainer script
-        const trainerResult = await pythonProcessManager.executeScript(
-            "trainer",
-            []
-        );
+        // Step 7: Trigger the trainer script based on implementation
+        let trainerResult;
+        if (implementation === "javascript") {
+            logger.info("Using JavaScript trainer for document indexing");
+            trainerResult = await JSTrainer.indexDocumentsWithJSRAG(
+                JSTrainer.prepareDocumentsForIndexing(updatedData)
+            );
+            trainerResult.implementation = "javascript";
+        } else {
+            logger.info("Using Python trainer for document indexing");
+            trainerResult = await pythonProcessManager.executeScript(
+                "trainer",
+                []
+            );
+            trainerResult.implementation = "python";
+        }
 
-        if (trainerResult.error) {
-            throw new Error(`Trainer failed: ${trainerResult.error}`);
+        if (trainerResult.error || !trainerResult.success) {
+            throw new Error(
+                `Trainer failed: ${trainerResult.error || "Unknown error"}`
+            );
         }
 
         res.json({
@@ -890,6 +924,7 @@ router.post("/documents/train", async (req, res) => {
             newDocumentsAdded: newChatDocuments.length,
             totalDocuments: updatedData.length,
             trainerResult: trainerResult,
+            implementation: implementation,
         });
     } catch (error) {
         logger.error("Error in automatic training process", {
@@ -909,13 +944,29 @@ router.post("/documents/train", async (req, res) => {
  */
 router.get("/stats", async (req, res) => {
     try {
-        const pythonResult = await pythonProcessManager.executeScript(
-            "rag_chatbot",
-            ["stats"]
-        );
+        const { implementation = "python" } = req.query;
 
-        if (pythonResult.error) {
-            throw new Error(pythonResult.error);
+        let statsResult;
+        if (implementation === "javascript") {
+            logger.info("Getting stats using JavaScript implementation");
+            const jsChatbot = new JSRAGChatbot();
+            statsResult = await jsChatbot.getStats();
+            if (!statsResult.success) {
+                throw new Error(
+                    statsResult.error || "Failed to get JavaScript stats"
+                );
+            }
+            statsResult.implementation = "javascript";
+        } else {
+            logger.info("Getting stats using Python implementation");
+            statsResult = await pythonProcessManager.executeScript(
+                "rag_chatbot",
+                ["stats"]
+            );
+            if (statsResult.error) {
+                throw new Error(statsResult.error);
+            }
+            statsResult.implementation = "python";
         }
 
         // Get database stats
@@ -925,9 +976,10 @@ router.get("/stats", async (req, res) => {
         res.json({
             success: true,
             stats: {
-                ...pythonResult,
+                ...statsResult,
                 totalSessions,
                 totalMessages,
+                implementation: implementation,
             },
         });
     } catch (error) {

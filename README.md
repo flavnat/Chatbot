@@ -70,20 +70,63 @@ cd backend && npm start
 cd frontend && pnpm run dev
 ```
 
+### Docker Setup (Recommended)
+
+For the easiest setup with all dependencies, use Docker:
+
+```bash
+# Build and start all services
+docker compose up --build
+
+# Or run in background
+docker compose up -d --build
+
+# View logs
+docker compose logs -f
+
+# Stop all services
+docker compose down
+
+# Stop and remove data volumes (WARNING: deletes databases)
+docker compose down -v
+```
+
+**Services included:**
+- **MongoDB**: Database on `localhost:27017`
+- **Qdrant**: Vector database on `localhost:6333`
+- **Backend**: Node.js + Python API on `localhost:3000`
+- **Frontend**: React dev server on `localhost:5173`
+
+**All API keys and environment variables are pre-configured in `docker-compose.yml`**
+
+**Note:** Simple development setup using Vite dev server (no nginx)
+
 ## Scripts
 
 ```bash
+# Start the server in production mode
+npm start
+
+# Start the server in development mode with auto-reload
+npm run dev
+
 # Install all dependencies (Node.js + Python)
 npm run install:all
 
 # Setup Python environment
 npm run setup:python
 
-# Setup Qdrant database
-npm run setup:qdrant
+# Setup Qdrant database (Python)
+npm run setup:py:qdrant
 
-# Train chatbot on existing data
-npm run train:chatbot
+# Setup Qdrant database (JavaScript)
+npm run setup:js:qdrant
+
+# Train chatbot on existing data (Python)
+npm run train:py:chatbot
+
+# Train chatbot on existing data (JavaScript)
+npm run train:js:chatbot
 
 # Seed database with initial data
 npm run db:seed
@@ -97,14 +140,32 @@ npm run clean:logs
 # Run tests
 npm test
 
+# Run tests in watch mode
+npm run test:watch
+
 # Run Python tests
 npm run test:python
+
+# Run JavaScript tests
+npm run test:js
+
+# Run comparison tests
+npm run test:compare
+
+# Build the project
+npm run build
 
 # Lint code
 npm run lint
 
 # Fix linting issues
 npm run lint:fix
+
+# Docker commands
+npm run docker:build    # Build Docker containers
+npm run docker:up       # Start Docker containers
+npm run docker:down     # Stop Docker containers
+npm run docker:logs     # View Docker logs
 ```
 
 ## API Endpoints

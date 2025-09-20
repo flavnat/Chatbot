@@ -18,16 +18,20 @@ class JSRAG {
 
         try {
             // Initialize Qdrant client
-            const qdrantUrl = process.env.QDRANT_URL || "http://localhost:6333";
+            const qdrantUrl = process.env.QDRANT_URL || "http://qdrant:6333";
             const qdrantApiKey = process.env.QDRANT_API_KEY;
 
             if (qdrantApiKey) {
                 this.client = new QdrantClient({
                     url: qdrantUrl,
                     apiKey: qdrantApiKey,
+                    checkCompatibility: false,
                 });
             } else {
-                this.client = new QdrantClient({ url: qdrantUrl });
+                this.client = new QdrantClient({
+                    url: qdrantUrl,
+                    checkCompatibility: false,
+                });
             }
 
             // Initialize sentence transformer for embeddings
