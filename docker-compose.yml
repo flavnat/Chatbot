@@ -1,5 +1,4 @@
 services:
-    # MongoDB Database
     mongodb:
         image: mongo:7.0
         container_name: chatbot_mongodb
@@ -12,11 +11,9 @@ services:
             MONGO_INITDB_DATABASE: chatbot_db
         volumes:
             - mongodb_data:/data/db
-            - ./backend/scripts/seed.js:/docker-entrypoint-initdb.d/seed.js:ro
         networks:
             - chatbot_network
 
-    # Qdrant Vector Database
     qdrant:
         image: qdrant/qdrant:v1.7.4
         container_name: chatbot_qdrant
@@ -29,7 +26,6 @@ services:
         networks:
             - chatbot_network
 
-    # Backend Service (Node.js + Python)
     backend:
         build:
             context: ./backend
@@ -40,23 +36,12 @@ services:
             - "3000:3000"
         env_file:
             - ./backend/.env
-        environment:
-            NODE_ENV: production
-            PORT: 3000
-            MONGODB_URI: mongodb://admin:password@mongodb:27017/chatbot_db?authSource=admin
-            QDRANT_URL: http://qdrant:6333
-            QDRANT_COLLECTION_NAME: chatbot_documents
         depends_on:
             - mongodb
             - qdrant
-        volumes:
-            - ./backend:/app
-            - /app/node_modules
         networks:
             - chatbot_network
-        command: npm start
 
-    # Frontend Service (React)
     frontend:
         build:
             context: ./frontend
@@ -65,8 +50,6 @@ services:
         restart: unless-stopped
         ports:
             - "5173:5173"
-        depends_on:
-            - backend
         networks:
             - chatbot_network
 
