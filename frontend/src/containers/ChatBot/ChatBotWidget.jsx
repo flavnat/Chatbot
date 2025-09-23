@@ -3,13 +3,20 @@ import {
     CloseOutlined,
     MessageOutlined,
     SendOutlined,
-    CommentOutlined, 
+    CommentOutlined,
     BookOutlined,
-    QuestionCircleOutlined, 
-    ClockCircleOutlined ,
-    
+    QuestionCircleOutlined,
+    ClockCircleOutlined,
 } from "@ant-design/icons";
-import { Button, Input, AutoComplete, Dropdown, Menu,Tabs } from "antd";
+import {
+    Button,
+    Input,
+    AutoComplete,
+    Dropdown,
+    Menu,
+    Tabs,
+    Collapse,
+} from "antd";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +28,12 @@ import {
     LOAD_MESSAGES_FROM_STORAGE,
 } from "./constants";
 import { chatService } from "../../services/chatService";
-import { FileTextOutlined,LinkOutlined, VideoCameraOutlined} from "@ant-design/icons";
+import {
+    FileTextOutlined,
+    LinkOutlined,
+    VideoCameraOutlined,
+} from "@ant-design/icons";
+import { learningResources, faqData, helpResources } from "./chatBotData";
 
 const FloatingButton = styled(Button)`
     position: fixed;
@@ -111,7 +123,6 @@ const ChatBody = styled.div`
     overflow-y: auto;
     background: inherit;
 `;
-
 
 const Timestamp = styled.div`
     font-size: 10px;
@@ -277,49 +288,36 @@ const SendButton = styled(Button)`
 `;
 
 const StyledTabs = styled(Tabs)`
- 
     .ant-tabs-nav {
         margin-bottom: 16px;
         border-bottom: 2px solid #f0f0f0;
-       
-       
-
- 
     }
-    
+
     .ant-tabs-tab {
         flex: 1;
         justify-content: center;
         margin: 0;
         padding: 8px 16px;
         transition: all 0.3s ease;
-          
-
-
-     
     }
-    
+
     .ant-tabs-tab-active {
         font-weight: 600;
-   
-        
-       
     }
-    
+
     .ant-tabs-ink-bar {
-   
-         background:#1890ff
+        background: #1890ff;
     }
 `;
 
 const TabContent = styled.div`
     display: flex;
     align-items: center;
-    height:30px;
+    height: 30px;
     justify-content: center;
     width: 100%;
-   color: ${props => props.active ? '#1890ff' : '#000000'};  
-    font-weight: ${props => props.active ? '600' : '400'};
+    color: ${(props) => (props.active ? "#1890ff" : "#000000")};
+    font-weight: ${(props) => (props.active ? "600" : "400")};
 `;
 
 const MessageWrapper = styled.div`
@@ -393,143 +391,121 @@ const SuggestedQuestionItem = styled.div`
     }
 `;
 
-
 const ResourcesContainer = styled.div`
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
 `;
 
 const ResourcesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 `;
 
 const ResourceCard = styled.div`
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  }
-
-  h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1890ff;
-  }
-
-  p {
-    font-size: 13px;
-    color: #555;
-    line-height: 1.4;
-  }
-
-  .resource-icon {
-    font-size: 28px;
-    color: #1890ff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #e6f0ff;
-  }
-
-  .video-container {
+    background: #ffffff;
     border-radius: 8px;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-
-  .resource-link {
-    text-decoration: none;
-    color: #ffffff;
-    background: #1890ff;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: auto;
-
-    &:hover {
-      background: #1070d8;
-    }
-  }
-`;
-
-const SuggestedResources = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  h5 {
-    margin-bottom: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #1890ff;
-  }
-
-  .resource-list {
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     gap: 8px;
-  }
-
-  .resource-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #f5f8ff;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 13px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
 
     &:hover {
-      background: #e6f0ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
 
-    &.read {
-      opacity: 0.6;
+    h5 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1890ff;
     }
 
-    .resource-type {
-      font-size: 18px;
-      color: #1890ff;
-      margin-right: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    p {
+        font-size: 12px;
+        color: #555;
+        line-height: 1.4;
+        margin: 0;
     }
 
-    .unread-indicator {
-      width: 10px;
-      height: 10px;
-      background: #ff4d4f;
-      border-radius: 50%;
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
+    .resource-icon {
+        font-size: 20px;
+        color: #1890ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #e6f0ff;
     }
-  }
+`;
+const SuggestedResources = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    h5 {
+        margin-bottom: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #1890ff;
+    }
+
+    .resource-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .resource-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f5f8ff;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+
+        &:hover {
+            background: #e6f0ff;
+        }
+
+        &.read {
+            opacity: 0.6;
+        }
+
+        .resource-type {
+            font-size: 18px;
+            color: #1890ff;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .unread-indicator {
+            width: 10px;
+            height: 10px;
+            background: #ff4d4f;
+            border-radius: 50%;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
 `;
 
 const suggestedQuestions = [
@@ -550,13 +526,6 @@ const autoCompleteOptions = [
     { value: "documentation", label: "view documentation" },
     { value: "tutorial", label: "tutorials and guides" },
 ];
-
-const helpResources= [
-    { id: 1, title: "Getting Started Guide", type: "guide", read: false },
-    { id: 2, title: "API Documentation", type: "documentation", read: true },
-    { id: 3, title: "Troubleshooting Common Issues", type: "guide", read: false },
-    { id: 4, title: "Advanced Configuration", type: "documentation", read: false }
-  ];
 
 const { TabPane } = Tabs;
 
@@ -626,7 +595,7 @@ const ChatBotWidget = () => {
     );
     const messagesEndRef = useRef(null);
     const smartSuggestionsRef = useRef(null);
-    const [activeTab, setActiveTab] = useState('chat');
+    const [activeTab, setActiveTab] = useState("chat");
 
     const [isFirstVisit, setIsFirstVisit] = useState(true);
     //  close when it click outside the suggestions container i know its bulky implementation fr
@@ -790,46 +759,21 @@ const ChatBotWidget = () => {
 
     const questions = getSuggestedQuestions(_templates);
 
-    const renderResourceIcon = (type) => { 
-        switch (type) { 
-          case 'documentation': return 
-          case 'guide': return  
-          case 'video': return 
-          case 'code': return 
-          default: return 
-        } 
-      };
+    const renderResourceIcon = (type) => {
+        switch (type) {
+            case "documentation":
+                return;
+            case "guide":
+                return;
+            case "video":
+                return;
+            case "code":
+                return;
+            default:
+                return;
+        }
+    };
 
-    const learningResources = [ 
-   
-        { 
-          id: 1,
-          icon: <VideoCameraOutlined />, 
-          title: "Video Tutorials", 
-          description: "Step-by-step guides",
-          type: "video",
-          url: "https://www.youtube.com/embed/dGcsHMXbSOA"
-        }, 
-        { 
-          id: 2,
-          icon: <FileTextOutlined />, 
-          title: "Documentation", 
-          description: "Complete technical reference",
-          type: "document",
-          url: "/docs/react-cheatsheet.pdf"
-        },
-        
-        { 
-          id: 3,
-          icon: <LinkOutlined />, 
-          title: "Best Practices", 
-          description: "Expert recommendations",
-          type: "link",
-          url: "https://example.com/best-practices"
-        } 
-      ];
-  
-      
     return (
         <>
             <FloatingButton
@@ -866,409 +810,604 @@ const ChatBotWidget = () => {
                         </div>
                     </ChatHeader>
                     <StyledTabs
-    activeKey={activeTab}
-    onChange={(key) => setActiveTab(key)}
-    centered
->
-    <TabPane
-        key="chat"
-        tab={
-            <TabContent active={activeTab === 'chat'}>
-                <CommentOutlined style={{ marginRight: '8px', fontSize: '16px' }} />
-               {/* Chat*/}
-            </TabContent>
-        }
-    />
-    <TabPane
-        key="resources"
-        tab={
-            <TabContent active={activeTab === 'resources'}>
-                <BookOutlined style={{ marginRight: '8px', fontSize: '16px' }} />
-              {/* Resources*/}
-            </TabContent>
-        }
-    />
-    <TabPane
-        key='FQA'
-        tab={
-            <TabContent active={activeTab === 'FQA'}>
-                <QuestionCircleOutlined style={{ marginRight: '8px', fontSize: '16px' }} />
-                   {/*FQA*/}
-            </TabContent>
-        }
-    />
-</StyledTabs>
-{activeTab === 'chat' && (
-              <>
-                    <ChatBody>
-                        <MessagesContainer>
-                            {messages.map((message) => (
-                                <div key={message.id}>
-                                    {message.sender === "user" ? (
-                                        <MessageWrapper>
-                                            <MessageBubble
-                                                sender={message.sender}
-                                            >
-                                                <ReactMarkdown
-                                                    components={{
-                                                        p: ({ children }) => (
-                                                            <span
-                                                                style={{
-                                                                    margin: 0,
-                                                                }}
-                                                            >
-                                                                {children}
-                                                            </span>
-                                                        ),
-                                                        strong: ({
-                                                            children,
-                                                        }) => (
-                                                            <strong
-                                                                style={{
-                                                                    fontWeight:
-                                                                        "bold",
-                                                                }}
-                                                            >
-                                                                {children}
-                                                            </strong>
-                                                        ),
-                                                        ol: ({ children }) => (
-                                                            <ol
-                                                                style={{
-                                                                    margin: "4px 0",
-                                                                    paddingLeft:
-                                                                        "16px",
-                                                                }}
-                                                            >
-                                                                {children}
-                                                            </ol>
-                                                        ),
-                                                        ul: ({ children }) => (
-                                                            <ul
-                                                                style={{
-                                                                    margin: "4px 0",
-                                                                    paddingLeft:
-                                                                        "16px",
-                                                                }}
-                                                            >
-                                                                {children}
-                                                            </ul>
-                                                        ),
-                                                        li: ({ children }) => (
-                                                            <li
-                                                                style={{
-                                                                    margin: "2px 0",
-                                                                }}
-                                                            >
-                                                                {children}
-                                                            </li>
-                                                        ),
-                                                    }}
-                                                >
-                                                    {message.text}
-                                                </ReactMarkdown>
-                                            </MessageBubble>
-                                            <Timestamp sender="user">
-                                                {formatTime(message.timestamp)}
-                                            </Timestamp>
-                                        </MessageWrapper>
-                                    ) : (
-                                        <BotMessageWrapper>
-                                            <BotIcon />
-                                            <MessageWrapper>
-                                                <MessageBubble
-                                                    sender={message.sender}
-                                                >
-                                                    <ReactMarkdown
-                                                        components={{
-                                                            p: ({
-                                                                children,
-                                                            }) => (
-                                                                <span
-                                                                    style={{
-                                                                        margin: 0,
-                                                                    }}
-                                                                >
-                                                                    {children}
-                                                                </span>
-                                                            ),
-                                                            strong: ({
-                                                                children,
-                                                            }) => (
-                                                                <strong
-                                                                    style={{
-                                                                        fontWeight:
-                                                                            "bold",
-                                                                    }}
-                                                                >
-                                                                    {children}
-                                                                </strong>
-                                                            ),
-                                                            ol: ({
-                                                                children,
-                                                            }) => (
-                                                                <ol
-                                                                    style={{
-                                                                        margin: "4px 0",
-                                                                        paddingLeft:
-                                                                            "16px",
-                                                                    }}
-                                                                >
-                                                                    {children}
-                                                                </ol>
-                                                            ),
-                                                            ul: ({
-                                                                children,
-                                                            }) => (
-                                                                <ul
-                                                                    style={{
-                                                                        margin: "4px 0",
-                                                                        paddingLeft:
-                                                                            "16px",
-                                                                    }}
-                                                                >
-                                                                    {children}
-                                                                </ul>
-                                                            ),
-                                                            li: ({
-                                                                children,
-                                                            }) => (
-                                                                <li
-                                                                    style={{
-                                                                        margin: "2px 0",
-                                                                    }}
-                                                                >
-                                                                    {children}
-                                                                </li>
-                                                            ),
-                                                        }}
-                                                    >
-                                                        {message.text}
-                                                    </ReactMarkdown>
-                                                </MessageBubble>
-                                                <Timestamp sender="bot">
-                                                    {formatTime(
-                                                        message.timestamp
-                                                    )}
-                                                </Timestamp>
-                                            </MessageWrapper>
-                                        </BotMessageWrapper>
-                                    )}
-                                </div>
-                            ))}
-                            {typing && (
-                                <TypingMessageWrapper>
-                                    <BotIcon />
-                                    <TypingIndicator>
-                                        <div className="dot"></div>
-                                        <div className="dot"></div>
-                                        <div className="dot"></div>
-                                    </TypingIndicator>
-                                </TypingMessageWrapper>
-                            )}
-                            <div ref={messagesEndRef} />
-                        </MessagesContainer>
-
-                        {shouldShowSuggestedQuestions() && !limitReached && (
-                            <SuggestedQuestionsContainer>
-                                <SuggestedQuestionsGrid>
-                                    {questions.map((question, index) => (
-                                        <SuggestedQuestionItem
-                                            key={index}
-                                            onClick={() =>
-                                                handleSuggestedQuestionClick(
-                                                    question
-                                                )
-                                            }
-                                        >
-                                            {question}
-                                        </SuggestedQuestionItem>
-                                    ))}
-                                </SuggestedQuestionsGrid>
-                            </SuggestedQuestionsContainer>
-                        )}
-                    </ChatBody>
-                    <ChatFooter>
-                        <div style={{ flex: 1, position: "relative" }}>
-                            <AutoComplete
-                                value={inputValue}
-                                options={autoCompleteData}
-                                onChange={handleInputChange}
-                                onSelect={handleAutoCompleteSelect}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        handleSend();
-                                    }
-                                }}
-                                placeholder={
-                                    limitReached
-                                        ? "Monthly limit reached. Contact support at linkbuilders.support@gmail.com"
-                                        : "Type a message..."
-                                }
-                                disabled={limitReached}
-                                style={{
-                                    width: "100%",
-                                    border: "1px solid #3aaaff",
-                                    borderRadius: "8px",
-                                    fontSize: "13px",
-                                }}
-                                styles={{
-                                    popup: {
-                                        root: {
-                                            borderRadius: "8px",
-                                            border: "1px solid #3aaaff",
-                                        },
-                                    },
-                                }}
-                            />
-                            {showSmartSuggestions &&
-                                getSmartSuggestions(messages).length > 0 && (
-                                    <div
-                                        ref={smartSuggestionsRef}
-                                        style={{
-                                            position: "absolute",
-                                            top: "-140px",
-                                            left: 0,
-                                            right: 0,
-                                            background: "white",
-                                            border: "1px solid #e8e8e8",
-                                            borderRadius: "8px",
-                                            padding: "8px",
-                                            boxShadow:
-                                                "0 2px 8px rgba(0,0,0,0.1)",
-                                            zIndex: 1000,
-                                        }}
-                                    >
-                                        <div
+                        activeKey={activeTab}
+                        onChange={(key) => setActiveTab(key)}
+                        centered
+                        items={[
+                            {
+                                key: "chat",
+                                label: (
+                                    <TabContent>
+                                        <CommentOutlined
                                             style={{
-                                                fontSize: "11px",
-                                                color: "#666",
-                                                marginBottom: "4px",
+                                                marginRight: "8px",
+                                                fontSize: "16px",
                                             }}
-                                        >
-                                            💡 Smart suggestions:
-                                        </div>
-                                        <div
+                                        />
+                                        {/* Chat*/}
+                                    </TabContent>
+                                ),
+                            },
+                            {
+                                key: "resources",
+                                label: (
+                                    <TabContent>
+                                        <BookOutlined
                                             style={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                gap: "4px",
+                                                marginRight: "8px",
+                                                fontSize: "16px",
                                             }}
-                                        >
-                                            {getSmartSuggestions(messages).map(
-                                                (suggestion, index) => (
-                                                    <div
-                                                        key={index}
-                                                        onClick={() =>
-                                                            handleSmartSuggestionClick(
-                                                                suggestion
-                                                            )
-                                                        }
-                                                        style={{
-                                                            padding: "6px 8px",
-                                                            background:
-                                                                "#f8f9fa",
-                                                            borderRadius: "4px",
-                                                            fontSize: "12px",
-                                                            cursor: "pointer",
-                                                            transition:
-                                                                "all 0.2s ease",
-                                                        }}
-                                                        onMouseEnter={(e) =>
-                                                            (e.target.style.background =
-                                                                "#e6f7ff")
-                                                        }
-                                                        onMouseLeave={(e) =>
-                                                            (e.target.style.background =
-                                                                "#f8f9fa")
-                                                        }
+                                        />
+                                        {/* Resources*/}
+                                    </TabContent>
+                                ),
+                            },
+                            {
+                                key: "faq",
+                                label: (
+                                    <TabContent>
+                                        <QuestionCircleOutlined
+                                            style={{
+                                                marginRight: "8px",
+                                                fontSize: "16px",
+                                            }}
+                                        />
+                                        {/*FAQ*/}
+                                    </TabContent>
+                                ),
+                            },
+                        ]}
+                    />
+                    {activeTab === "chat" && (
+                        <>
+                            <ChatBody>
+                                <MessagesContainer>
+                                    {messages.map((message) => (
+                                        <div key={message.id}>
+                                            {message.sender === "user" ? (
+                                                <MessageWrapper>
+                                                    <MessageBubble
+                                                        sender={message.sender}
                                                     >
-                                                        {suggestion}
-                                                    </div>
-                                                )
+                                                        <ReactMarkdown
+                                                            components={{
+                                                                p: ({
+                                                                    children,
+                                                                }) => (
+                                                                    <span
+                                                                        style={{
+                                                                            margin: 0,
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            children
+                                                                        }
+                                                                    </span>
+                                                                ),
+                                                                strong: ({
+                                                                    children,
+                                                                }) => (
+                                                                    <strong
+                                                                        style={{
+                                                                            fontWeight:
+                                                                                "bold",
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            children
+                                                                        }
+                                                                    </strong>
+                                                                ),
+                                                                ol: ({
+                                                                    children,
+                                                                }) => (
+                                                                    <ol
+                                                                        style={{
+                                                                            margin: "4px 0",
+                                                                            paddingLeft:
+                                                                                "16px",
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            children
+                                                                        }
+                                                                    </ol>
+                                                                ),
+                                                                ul: ({
+                                                                    children,
+                                                                }) => (
+                                                                    <ul
+                                                                        style={{
+                                                                            margin: "4px 0",
+                                                                            paddingLeft:
+                                                                                "16px",
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            children
+                                                                        }
+                                                                    </ul>
+                                                                ),
+                                                                li: ({
+                                                                    children,
+                                                                }) => (
+                                                                    <li
+                                                                        style={{
+                                                                            margin: "2px 0",
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            children
+                                                                        }
+                                                                    </li>
+                                                                ),
+                                                            }}
+                                                        >
+                                                            {message.text}
+                                                        </ReactMarkdown>
+                                                    </MessageBubble>
+                                                    <Timestamp sender="user">
+                                                        {formatTime(
+                                                            message.timestamp
+                                                        )}
+                                                    </Timestamp>
+                                                </MessageWrapper>
+                                            ) : (
+                                                <BotMessageWrapper>
+                                                    <BotIcon />
+                                                    <MessageWrapper>
+                                                        <MessageBubble
+                                                            sender={
+                                                                message.sender
+                                                            }
+                                                        >
+                                                            <ReactMarkdown
+                                                                components={{
+                                                                    p: ({
+                                                                        children,
+                                                                    }) => (
+                                                                        <span
+                                                                            style={{
+                                                                                margin: 0,
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                children
+                                                                            }
+                                                                        </span>
+                                                                    ),
+                                                                    strong: ({
+                                                                        children,
+                                                                    }) => (
+                                                                        <strong
+                                                                            style={{
+                                                                                fontWeight:
+                                                                                    "bold",
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                children
+                                                                            }
+                                                                        </strong>
+                                                                    ),
+                                                                    ol: ({
+                                                                        children,
+                                                                    }) => (
+                                                                        <ol
+                                                                            style={{
+                                                                                margin: "4px 0",
+                                                                                paddingLeft:
+                                                                                    "16px",
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                children
+                                                                            }
+                                                                        </ol>
+                                                                    ),
+                                                                    ul: ({
+                                                                        children,
+                                                                    }) => (
+                                                                        <ul
+                                                                            style={{
+                                                                                margin: "4px 0",
+                                                                                paddingLeft:
+                                                                                    "16px",
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                children
+                                                                            }
+                                                                        </ul>
+                                                                    ),
+                                                                    li: ({
+                                                                        children,
+                                                                    }) => (
+                                                                        <li
+                                                                            style={{
+                                                                                margin: "2px 0",
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                children
+                                                                            }
+                                                                        </li>
+                                                                    ),
+                                                                }}
+                                                            >
+                                                                {message.text}
+                                                            </ReactMarkdown>
+                                                        </MessageBubble>
+                                                        <Timestamp sender="bot">
+                                                            {formatTime(
+                                                                message.timestamp
+                                                            )}
+                                                        </Timestamp>
+                                                    </MessageWrapper>
+                                                </BotMessageWrapper>
                                             )}
                                         </div>
-                                    </div>
-                                )}
+                                    ))}
+                                    {typing && (
+                                        <TypingMessageWrapper>
+                                            <BotIcon />
+                                            <TypingIndicator>
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                            </TypingIndicator>
+                                        </TypingMessageWrapper>
+                                    )}
+                                    <div ref={messagesEndRef} />
+                                </MessagesContainer>
+
+                                {shouldShowSuggestedQuestions() &&
+                                    !limitReached && (
+                                        <SuggestedQuestionsContainer>
+                                            <SuggestedQuestionsGrid>
+                                                {questions.map(
+                                                    (question, index) => (
+                                                        <SuggestedQuestionItem
+                                                            key={index}
+                                                            onClick={() =>
+                                                                handleSuggestedQuestionClick(
+                                                                    question
+                                                                )
+                                                            }
+                                                        >
+                                                            {question}
+                                                        </SuggestedQuestionItem>
+                                                    )
+                                                )}
+                                            </SuggestedQuestionsGrid>
+                                        </SuggestedQuestionsContainer>
+                                    )}
+                            </ChatBody>
+                            <ChatFooter>
+                                <div style={{ flex: 1, position: "relative" }}>
+                                    <AutoComplete
+                                        value={inputValue}
+                                        options={autoCompleteData}
+                                        onChange={handleInputChange}
+                                        onSelect={handleAutoCompleteSelect}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                handleSend();
+                                            }
+                                        }}
+                                        placeholder={
+                                            limitReached
+                                                ? "Monthly limit reached. Contact support at linkbuilders.support@gmail.com"
+                                                : "Type a message..."
+                                        }
+                                        disabled={limitReached}
+                                        style={{
+                                            width: "100%",
+                                            border: "1px solid #3aaaff",
+                                            borderRadius: "8px",
+                                            fontSize: "13px",
+                                        }}
+                                        styles={{
+                                            popup: {
+                                                root: {
+                                                    borderRadius: "8px",
+                                                    border: "1px solid #3aaaff",
+                                                },
+                                            },
+                                        }}
+                                    />
+                                    {showSmartSuggestions &&
+                                        getSmartSuggestions(messages).length >
+                                            0 && (
+                                            <div
+                                                ref={smartSuggestionsRef}
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "-140px",
+                                                    left: 0,
+                                                    right: 0,
+                                                    background: "white",
+                                                    border: "1px solid #e8e8e8",
+                                                    borderRadius: "8px",
+                                                    padding: "8px",
+                                                    boxShadow:
+                                                        "0 2px 8px rgba(0,0,0,0.1)",
+                                                    zIndex: 1000,
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        fontSize: "11px",
+                                                        color: "#666",
+                                                        marginBottom: "4px",
+                                                    }}
+                                                >
+                                                    💡 Smart suggestions:
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        gap: "4px",
+                                                    }}
+                                                >
+                                                    {getSmartSuggestions(
+                                                        messages
+                                                    ).map(
+                                                        (suggestion, index) => (
+                                                            <div
+                                                                key={index}
+                                                                onClick={() =>
+                                                                    handleSmartSuggestionClick(
+                                                                        suggestion
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    padding:
+                                                                        "6px 8px",
+                                                                    background:
+                                                                        "#f8f9fa",
+                                                                    borderRadius:
+                                                                        "4px",
+                                                                    fontSize:
+                                                                        "12px",
+                                                                    cursor: "pointer",
+                                                                    transition:
+                                                                        "all 0.2s ease",
+                                                                }}
+                                                                onMouseEnter={(
+                                                                    e
+                                                                ) =>
+                                                                    (e.target.style.background =
+                                                                        "#e6f7ff")
+                                                                }
+                                                                onMouseLeave={(
+                                                                    e
+                                                                ) =>
+                                                                    (e.target.style.background =
+                                                                        "#f8f9fa")
+                                                                }
+                                                            >
+                                                                {suggestion}
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                </div>
+                                <SendButton
+                                    type="primary"
+                                    icon={<SendOutlined />}
+                                    onClick={handleSend}
+                                    disabled={typing || limitReached}
+                                />
+                            </ChatFooter>
+                        </>
+                    )}
+
+                    {activeTab === "resources" && (
+                        <ResourcesContainer>
+                            <ResourcesGrid>
+                                {learningResources.map((resource, index) => (
+                                    <ResourceCard key={index}>
+                                        <div className="resource-icon">
+                                            {resource.icon ===
+                                            "VideoCameraOutlined" ? (
+                                                <VideoCameraOutlined />
+                                            ) : (
+                                                <VideoCameraOutlined />
+                                            )}
+                                        </div>
+                                        <h5>{resource.title}</h5>
+                                        <p>{resource.description}</p>
+
+                                        {resource.type === "video" &&
+                                            (() => {
+                                                const videoId = resource.url
+                                                    .split("/")
+                                                    .pop();
+                                                const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                                                return (
+                                                    <div
+                                                        style={{
+                                                            textAlign: "center",
+                                                            marginTop: "8px",
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                width: "100%",
+                                                                height: "80px",
+                                                                background:
+                                                                    "#f0f0f0",
+                                                                borderRadius:
+                                                                    "6px",
+                                                                marginBottom:
+                                                                    "6px",
+                                                                cursor: "pointer",
+                                                                overflow:
+                                                                    "hidden",
+                                                                position:
+                                                                    "relative",
+                                                            }}
+                                                            onClick={() =>
+                                                                window.open(
+                                                                    resource.url.replace(
+                                                                        "embed/",
+                                                                        "watch?v="
+                                                                    ),
+                                                                    "_blank"
+                                                                )
+                                                            }
+                                                        >
+                                                            <img
+                                                                src={
+                                                                    thumbnailUrl
+                                                                }
+                                                                alt={
+                                                                    resource.title
+                                                                }
+                                                                style={{
+                                                                    width: "100%",
+                                                                    height: "100%",
+                                                                    objectFit:
+                                                                        "cover",
+                                                                    borderRadius:
+                                                                        "6px",
+                                                                }}
+                                                                onError={(
+                                                                    e
+                                                                ) => {
+                                                                    // Fallback to icon if thumbnail fails to load
+                                                                    e.target.style.display =
+                                                                        "none";
+                                                                    e.target.nextElementSibling.style.display =
+                                                                        "flex";
+                                                                }}
+                                                            />
+                                                            <div
+                                                                style={{
+                                                                    position:
+                                                                        "absolute",
+                                                                    top: "50%",
+                                                                    left: "50%",
+                                                                    transform:
+                                                                        "translate(-50%, -50%)",
+                                                                    display:
+                                                                        "none",
+                                                                    alignItems:
+                                                                        "center",
+                                                                    justifyContent:
+                                                                        "center",
+                                                                    width: "100%",
+                                                                    height: "100%",
+                                                                }}
+                                                            >
+                                                                <VideoCameraOutlined
+                                                                    style={{
+                                                                        fontSize:
+                                                                            "24px",
+                                                                        color: "#1890ff",
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <a
+                                                            href={resource.url.replace(
+                                                                "embed/",
+                                                                "watch?v="
+                                                            )}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            style={{
+                                                                fontSize:
+                                                                    "11px",
+                                                                color: "#1890ff",
+                                                                textDecoration:
+                                                                    "none",
+                                                                display:
+                                                                    "block",
+                                                            }}
+                                                        >
+                                                            Watch on YouTube →
+                                                        </a>
+                                                    </div>
+                                                );
+                                            })()}
+
+                                        {(resource.type === "document" ||
+                                            resource.type === "link") && (
+                                            <a
+                                                href={resource.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="resource-link"
+                                            >
+                                                {resource.type === "document"
+                                                    ? "Open Document"
+                                                    : "Explore"}{" "}
+                                                {resource.type ===
+                                                "document" ? (
+                                                    <FileTextOutlined />
+                                                ) : (
+                                                    <LinkOutlined />
+                                                )}
+                                            </a>
+                                        )}
+                                    </ResourceCard>
+                                ))}
+                            </ResourcesGrid>
+
+                            <SuggestedResources>
+                                <h5>Suggested for you</h5>
+                                <div className="resource-list">
+                                    {helpResources.map((resource) => (
+                                        <div
+                                            key={resource.id}
+                                            className={`resource-item ${
+                                                resource.read ? "read" : ""
+                                            }`}
+                                        >
+                                            <div className="resource-type">
+                                                {renderResourceIcon(
+                                                    resource.type
+                                                )}
+                                            </div>
+                                            <span
+                                                style={{ marginInline: "1rem" }}
+                                            >
+                                                {resource.title}
+                                            </span>
+                                            {!resource.read && (
+                                                <div className="unread-indicator"></div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </SuggestedResources>
+                        </ResourcesContainer>
+                    )}
+
+                    {activeTab === "faq" && (
+                        <div style={{ padding: "16px" }}>
+                            <h4
+                                style={{
+                                    textAlign: "center",
+                                    marginBottom: "16px",
+                                    color: "#1890ff",
+                                }}
+                            >
+                                ❓ Frequently Asked Questions
+                            </h4>
+                            <Collapse
+                                accordion
+                                items={faqData}
+                                bordered={false}
+                                style={{ background: "transparent" }}
+                            />
                         </div>
-                        <SendButton
-                            type="primary"
-                            icon={<SendOutlined />}
-                            onClick={handleSend}
-                            disabled={typing || limitReached}
-                        />
-                    </ChatFooter>
-                    </>)}
-
-                    {activeTab === 'resources' && (
-  <ResourcesContainer>
-    <h4>Recommended Resources</h4>
-    <ResourcesGrid>
-      {learningResources.map((resource, index) => (
-        <ResourceCard key={index}>
-          <div className="resource-icon">{resource.icon || <VideoCameraOutlined />}</div>
-          <h5>{resource.title}</h5>
-          <p>{resource.description}</p>
-
-          {resource.type === 'video' && (
-            <div className="video-container">
-              <iframe
-                width="100%"
-                height="200"
-                src={resource.url}
-                title={resource.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          )}
-
-          {(resource.type === 'document' || resource.type === 'link') && (
-            <a
-              href={resource.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="resource-link"
-            >
-              {resource.type === 'document' ? 'Open Document' : 'Explore'}{' '}
-              {resource.type === 'document' ? <FileTextOutlined /> : <LinkOutlined />}
-            </a>
-          )}
-        </ResourceCard>
-      ))}
-    </ResourcesGrid>
-
-    <SuggestedResources>
-      <h5>Suggested for you</h5>
-      <div className="resource-list">
-        {helpResources.map((resource) => (
-          <div
-            key={resource.id}
-            className={`resource-item ${resource.read ? 'read' : ''}`}
-            onClick={() => markResourceAsRead(resource.id)}
-          >
-            <div className="resource-type">
-              {renderResourceIcon(resource.type)}
-            </div>
-            <span>{resource.title}</span>
-            {!resource.read && <div className="unread-indicator"></div>}
-          </div>
-        ))}
-      </div>
-    </SuggestedResources>
-  </ResourcesContainer>
-)}
-
-
-{activeTab === "FQA" && (
-  <div style={{ padding: "16px", textAlign: "center", color: "#555" }}>
-    <h4>❓ Help & FAQs</h4>
-    <p>Get answers to common questions about using this assistant.</p>
-    <p>Click a question below or ask directly in the chat box.</p>
-  </div>
-)}
-
+                    )}
                 </ChatPanel>
             )}
         </>
