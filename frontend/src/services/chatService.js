@@ -41,7 +41,7 @@ export const chatService = {
                 requestData.sessionId = messageData.sessionId;
             }
 
-            console.log("Sending request data:", requestData); // Debug log
+            // console.log("Sending request data:", requestData); // Debug log
 
             const response = await api.post("/chat/message", requestData);
 

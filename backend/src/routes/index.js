@@ -3,9 +3,11 @@ const router = express.Router();
 
 // Import route modules
 const chatRoutes = require("./chat");
+const authRoutes = require("./auth");
 
 // Mount routes
 router.use("/chat", chatRoutes);
+router.use("/auth", authRoutes);
 
 // Health check endpoint
 router.get("/health", (req, res) => {

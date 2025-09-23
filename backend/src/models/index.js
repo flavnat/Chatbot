@@ -84,13 +84,12 @@ const chatSessionSchema = new mongoose.Schema({
     },
 });
 
-// User Schema (for future authentication)
+// User Schema (for Google OAuth)
 const userSchema = new mongoose.Schema({
-    username: {
+    googleId: {
         type: String,
         required: true,
         unique: true,
-        trim: true,
     },
     email: {
         type: String,
@@ -99,9 +98,13 @@ const userSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
     },
-    password: {
+    name: {
         type: String,
         required: true,
+        trim: true,
+    },
+    picture: {
+        type: String,
     },
     role: {
         type: String,
@@ -118,6 +121,46 @@ const userSchema = new mongoose.Schema({
     },
     lastLogin: {
         type: Date,
+    },
+    monthlyUsage: {
+        month: {
+            type: String, // YYYY-MM
+            default: () => new Date().toISOString().slice(0, 7),
+        },
+        questionsAsked: {
+            type: Number,
+            default: 0,
+        },
+        limit: {
+            type: Number,
+            default: 10,
+        },
+    },
+});
+
+// User Session Schema
+const userSessionSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+    sessionKey: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    expiresAt: {
+        type: Date,
+        default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
     },
 });
 
@@ -147,9 +190,11 @@ chatMessageSchema.statics.getSessionMessages = function (
 const ChatMessage = mongoose.model("ChatMessage", chatMessageSchema);
 const ChatSession = mongoose.model("ChatSession", chatSessionSchema);
 const User = mongoose.model("User", userSchema);
+const UserSession = mongoose.model("UserSession", userSessionSchema);
 
 module.exports = {
     ChatMessage,
     ChatSession,
     User,
+    UserSession,
 };

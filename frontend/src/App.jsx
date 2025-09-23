@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { ConfigProvider } from "antd";
 import store from "./store/configureStore";
 import DefaultLayout from "./containers/DefaultLayout";
+import AuthCallback from "./containers/AuthCallback";
 
 function App() {
     return (
@@ -11,6 +12,10 @@ function App() {
                 <Router>
                     <Routes>
                         <Route path="/" element={<DefaultLayout />} />
+                        <Route
+                            path="/auth/callback"
+                            element={<AuthCallback />}
+                        />
                     </Routes>
                 </Router>
             </ConfigProvider>

@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const session = require("express-session");
+const passport = require("passport");
+const MongoStore = require("connect-mongo");
 const routes = require("./routes");
 const config = require("./config");
 const logger = require("./utils/logger");
@@ -19,24 +22,51 @@ app.use(
 );
 
 // Rate limiting
-const limiter = rateLimit({
-    windowMs: config.RATE_LIMIT_WINDOW_MS,
-    max: config.RATE_LIMIT_MAX_REQUESTS,
-    message: {
-        error: "Too many requests from this IP, please try again later.",
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-app.use(limiter);
+// const limiter = rateLimit({
+//     windowMs: config.RATE_LIMIT_WINDOW_MS,
+//     max: config.RATE_LIMIT_MAX_REQUESTS,
+//     message: {
+//         error: "Too many requests from this IP, please try again later.",
+//     },
+//     standardHeaders: true,
+//     legacyHeaders: false,
+// });
+// app.use(limiter);
 
 // CORS configuration
 app.use(
     cors({
         origin: config.CORS_ORIGIN,
         credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization", "x-session-key"],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     })
 );
+
+// Session configuration
+app.use(
+    session({
+        secret: config.JWT_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: config.MONGODB_URI,
+            collectionName: "sessions",
+        }),
+        cookie: {
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            httpOnly: true,
+            secure: config.NODE_ENV === "production",
+        },
+    })
+);
+
+// Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport configuration
+require("./config/passport")(passport);
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));

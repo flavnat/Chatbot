@@ -6,7 +6,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const pythonProcessManager = require("../utils/pythonProcessManager");
 const logger = require("../utils/logger");
-const { ChatMessage, ChatSession } = require("../models");
+const { ChatMessage, ChatSession, UserSession, User } = require("../models");
 const { sanitizeForVectorDB } = require("../utils/textSanitizer");
 
 // Import new utilities
@@ -209,6 +209,72 @@ router.post("/test-save", async (req, res) => {
 router.post(
     "/message",
     [
+        // Auth middleware
+        async (req, res, next) => {
+            try {
+                const sessionKey = req.headers["x-session-key"];
+
+                if (!sessionKey) {
+                    return res.status(401).json({
+                        success: false,
+                        error: "Authentication required. Please log in.",
+                    });
+                }
+
+                const userSession = await UserSession.findOne({
+                    sessionKey,
+                    isActive: true,
+                    expiresAt: { $gt: new Date() },
+                }).populate("userId");
+
+                if (!userSession) {
+                    return res.status(401).json({
+                        success: false,
+                        error: "Invalid or expired session. Please log in again.",
+                    });
+                }
+
+                req.user = userSession.userId;
+                next();
+            } catch (error) {
+                logger.error("Auth middleware error", error);
+                res.status(500).json({
+                    success: false,
+                    error: "Authentication check failed",
+                });
+            }
+        },
+        // Usage limit middleware
+        async (req, res, next) => {
+            try {
+                const currentMonth = new Date().toISOString().slice(0, 7);
+
+                if (req.user.monthlyUsage.month !== currentMonth) {
+                    // Reset usage for new month
+                    req.user.monthlyUsage.month = currentMonth;
+                    req.user.monthlyUsage.questionsAsked = 0;
+                    await req.user.save();
+                }
+
+                if (
+                    req.user.monthlyUsage.questionsAsked >=
+                    req.user.monthlyUsage.limit
+                ) {
+                    return res.status(429).json({
+                        success: false,
+                        error: "Monthly question limit reached. Please contact support at support@chatbot.com for more questions.",
+                    });
+                }
+
+                next();
+            } catch (error) {
+                logger.error("Usage check error", error);
+                res.status(500).json({
+                    success: false,
+                    error: "Usage check failed",
+                });
+            }
+        },
         // Rate limiting middleware
         (req, res, next) => {
             const clientIP =
@@ -301,6 +367,7 @@ router.post(
                     .substr(2, 9)}`;
                 session = new ChatSession({
                     sessionId: newSessionId,
+                    userId: req.user._id.toString(),
                     title:
                         message.substring(0, 50) +
                         (message.length > 50 ? "..." : ""),
@@ -328,6 +395,7 @@ router.post(
             // Save user message
             const userMessage = new ChatMessage({
                 sessionId: session.sessionId,
+                userId: req.user._id.toString(),
                 role: "user",
                 message: message,
                 timestamp: new Date(),
@@ -431,6 +499,7 @@ router.post(
             // Save AI response
             const aiMessage = new ChatMessage({
                 sessionId: session.sessionId,
+                userId: req.user._id.toString(),
                 role: "assistant",
                 response: aiResult.response,
                 metadata: {
@@ -457,6 +526,10 @@ router.post(
                     messageId: aiMessage._id,
                     provider: aiResult.provider,
                 });
+
+                // Increment monthly usage
+                req.user.monthlyUsage.questionsAsked += 1;
+                await req.user.save();
             } catch (dbError) {
                 logger.error("Failed to save AI message to database", {
                     error: dbError.message,

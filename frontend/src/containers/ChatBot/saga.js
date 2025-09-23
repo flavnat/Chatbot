@@ -7,6 +7,7 @@ import {
     sendMessageError,
 } from "./actions";
 import { chatService } from "../../services/chatService";
+import api from "../../services/api";
 
 export function* handleSendMessage(action) {
     let retryCount = 0;
@@ -62,6 +63,18 @@ export function* handleSendMessage(action) {
                         message: response.data.message,
                     })
                 );
+
+                // Refresh user info to update usage
+                try {
+                    const userResponse = yield call(api.get, "/auth/me");
+                    yield put({
+                        type: "SET_USER",
+                        payload: userResponse.data.user,
+                    });
+                } catch (error) {
+                    console.error("Failed to refresh user info:", error);
+                }
+
                 return; // Success, exit the retry loop
             } else {
                 // Handle API error with better messaging

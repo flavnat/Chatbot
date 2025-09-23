@@ -12,11 +12,11 @@ const api = axios.create({
 // Request interceptor for adding auth tokens if needed
 api.interceptors.request.use(
     (config) => {
-        // Add any auth headers
-        // const token = localStorage.getItem('token');
-        // if (token) {
-        //     config.headers.Authorization = `Bearer ${token}`;
-        // }
+        // Add session key
+        const sessionKey = localStorage.getItem("sessionKey");
+        if (sessionKey) {
+            config.headers["x-session-key"] = sessionKey;
+        }
         return config;
     },
     (error) => {
