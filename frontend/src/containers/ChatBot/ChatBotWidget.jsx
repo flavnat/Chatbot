@@ -3,8 +3,13 @@ import {
     CloseOutlined,
     MessageOutlined,
     SendOutlined,
+    CommentOutlined, 
+    BookOutlined,
+    QuestionCircleOutlined, 
+    ClockCircleOutlined ,
+    
 } from "@ant-design/icons";
-import { Button, Input, AutoComplete, Dropdown, Menu } from "antd";
+import { Button, Input, AutoComplete, Dropdown, Menu,Tabs } from "antd";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +21,7 @@ import {
     LOAD_MESSAGES_FROM_STORAGE,
 } from "./constants";
 import { chatService } from "../../services/chatService";
+import { FileTextOutlined,LinkOutlined, VideoCameraOutlined} from "@ant-design/icons";
 
 const FloatingButton = styled(Button)`
     position: fixed;
@@ -106,19 +112,6 @@ const ChatBody = styled.div`
     background: inherit;
 `;
 
-const UserIcon = styled.div`
-    background-color: #1890ff;
-    width: 32px;
-    height: 32px;
-    border-radius: 100%;
-    font-size: 18px;
-    color: white;
-    flex-shrink: 0;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
 
 const Timestamp = styled.div`
     font-size: 10px;
@@ -283,6 +276,52 @@ const SendButton = styled(Button)`
     }
 `;
 
+const StyledTabs = styled(Tabs)`
+ 
+    .ant-tabs-nav {
+        margin-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+       
+       
+
+ 
+    }
+    
+    .ant-tabs-tab {
+        flex: 1;
+        justify-content: center;
+        margin: 0;
+        padding: 8px 16px;
+        transition: all 0.3s ease;
+          
+
+
+     
+    }
+    
+    .ant-tabs-tab-active {
+        font-weight: 600;
+   
+        
+       
+    }
+    
+    .ant-tabs-ink-bar {
+   
+         background:#1890ff
+    }
+`;
+
+const TabContent = styled.div`
+    display: flex;
+    align-items: center;
+    height:30px;
+    justify-content: center;
+    width: 100%;
+   color: ${props => props.active ? '#1890ff' : '#000000'};  
+    font-weight: ${props => props.active ? '600' : '400'};
+`;
+
 const MessageWrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -354,6 +393,145 @@ const SuggestedQuestionItem = styled.div`
     }
 `;
 
+
+const ResourcesContainer = styled.div`
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const ResourcesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+`;
+
+const ResourceCard = styled.div`
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  }
+
+  h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1890ff;
+  }
+
+  p {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.4;
+  }
+
+  .resource-icon {
+    font-size: 28px;
+    color: #1890ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e6f0ff;
+  }
+
+  .video-container {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .resource-link {
+    text-decoration: none;
+    color: #ffffff;
+    background: #1890ff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+
+    &:hover {
+      background: #1070d8;
+    }
+  }
+`;
+
+const SuggestedResources = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  h5 {
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1890ff;
+  }
+
+  .resource-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .resource-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f5f8ff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+
+    &:hover {
+      background: #e6f0ff;
+    }
+
+    &.read {
+      opacity: 0.6;
+    }
+
+    .resource-type {
+      font-size: 18px;
+      color: #1890ff;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .unread-indicator {
+      width: 10px;
+      height: 10px;
+      background: #ff4d4f;
+      border-radius: 50%;
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+`;
+
 const suggestedQuestions = [
     "How can I get started?",
     "What services do you offer?",
@@ -372,6 +550,15 @@ const autoCompleteOptions = [
     { value: "documentation", label: "view documentation" },
     { value: "tutorial", label: "tutorials and guides" },
 ];
+
+const helpResources= [
+    { id: 1, title: "Getting Started Guide", type: "guide", read: false },
+    { id: 2, title: "API Documentation", type: "documentation", read: true },
+    { id: 3, title: "Troubleshooting Common Issues", type: "guide", read: false },
+    { id: 4, title: "Advanced Configuration", type: "documentation", read: false }
+  ];
+
+const { TabPane } = Tabs;
 
 // Get dynamic suggested questions from templates
 const getSuggestedQuestions = (templates) => {
@@ -437,6 +624,7 @@ const ChatBotWidget = () => {
     const { messages, typing } = useSelector((state) => state.chatBot);
     const messagesEndRef = useRef(null);
     const smartSuggestionsRef = useRef(null);
+    const [activeTab, setActiveTab] = useState('chat');
 
     const [isFirstVisit, setIsFirstVisit] = useState(true);
     //  close when it click outside the suggestions container i know its bulky implementation fr
@@ -599,6 +787,46 @@ const ChatBotWidget = () => {
 
     const questions = getSuggestedQuestions(_templates);
 
+    const renderResourceIcon = (type) => { 
+        switch (type) { 
+          case 'documentation': return 
+          case 'guide': return  
+          case 'video': return 
+          case 'code': return 
+          default: return 
+        } 
+      };
+
+    const learningResources = [ 
+   
+        { 
+          id: 1,
+          icon: <VideoCameraOutlined />, 
+          title: "Video Tutorials", 
+          description: "Step-by-step guides",
+          type: "video",
+          url: "https://www.youtube.com/embed/dGcsHMXbSOA"
+        }, 
+        { 
+          id: 2,
+          icon: <FileTextOutlined />, 
+          title: "Documentation", 
+          description: "Complete technical reference",
+          type: "document",
+          url: "/docs/react-cheatsheet.pdf"
+        },
+        
+        { 
+          id: 3,
+          icon: <LinkOutlined />, 
+          title: "Best Practices", 
+          description: "Expert recommendations",
+          type: "link",
+          url: "https://example.com/best-practices"
+        } 
+      ];
+  
+      
     return (
         <>
             <FloatingButton
@@ -634,6 +862,41 @@ const ChatBotWidget = () => {
                             />
                         </div>
                     </ChatHeader>
+                    <StyledTabs
+    activeKey={activeTab}
+    onChange={(key) => setActiveTab(key)}
+    centered
+>
+    <TabPane
+        key="chat"
+        tab={
+            <TabContent active={activeTab === 'chat'}>
+                <CommentOutlined style={{ marginRight: '8px', fontSize: '16px' }} />
+               {/* Chat*/}
+            </TabContent>
+        }
+    />
+    <TabPane
+        key="resources"
+        tab={
+            <TabContent active={activeTab === 'resources'}>
+                <BookOutlined style={{ marginRight: '8px', fontSize: '16px' }} />
+              {/* Resources*/}
+            </TabContent>
+        }
+    />
+    <TabPane
+        key='FQA'
+        tab={
+            <TabContent active={activeTab === 'FQA'}>
+                <QuestionCircleOutlined style={{ marginRight: '8px', fontSize: '16px' }} />
+                   {/*FQA*/}
+            </TabContent>
+        }
+    />
+</StyledTabs>
+{activeTab === 'chat' && (
+              <>
                     <ChatBody>
                         <MessagesContainer>
                             {messages.map((message) => (
@@ -927,6 +1190,77 @@ const ChatBotWidget = () => {
                             disabled={typing}
                         />
                     </ChatFooter>
+                    </>)}
+
+                    {activeTab === 'resources' && (
+  <ResourcesContainer>
+    <h4>Recommended Resources</h4>
+    <ResourcesGrid>
+      {learningResources.map((resource, index) => (
+        <ResourceCard key={index}>
+          <div className="resource-icon">{resource.icon || <VideoCameraOutlined />}</div>
+          <h5>{resource.title}</h5>
+          <p>{resource.description}</p>
+
+          {resource.type === 'video' && (
+            <div className="video-container">
+              <iframe
+                width="100%"
+                height="200"
+                src={resource.url}
+                title={resource.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          )}
+
+          {(resource.type === 'document' || resource.type === 'link') && (
+            <a
+              href={resource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="resource-link"
+            >
+              {resource.type === 'document' ? 'Open Document' : 'Explore'}{' '}
+              {resource.type === 'document' ? <FileTextOutlined /> : <LinkOutlined />}
+            </a>
+          )}
+        </ResourceCard>
+      ))}
+    </ResourcesGrid>
+
+    <SuggestedResources>
+      <h5>Suggested for you</h5>
+      <div className="resource-list">
+        {helpResources.map((resource) => (
+          <div
+            key={resource.id}
+            className={`resource-item ${resource.read ? 'read' : ''}`}
+            onClick={() => markResourceAsRead(resource.id)}
+          >
+            <div className="resource-type">
+              {renderResourceIcon(resource.type)}
+            </div>
+            <span>{resource.title}</span>
+            {!resource.read && <div className="unread-indicator"></div>}
+          </div>
+        ))}
+      </div>
+    </SuggestedResources>
+  </ResourcesContainer>
+)}
+
+
+{activeTab === "FQA" && (
+  <div style={{ padding: "16px", textAlign: "center", color: "#555" }}>
+    <h4>❓ Help & FAQs</h4>
+    <p>Get answers to common questions about using this assistant.</p>
+    <p>Click a question below or ask directly in the chat box.</p>
+  </div>
+)}
+
                 </ChatPanel>
             )}
         </>
