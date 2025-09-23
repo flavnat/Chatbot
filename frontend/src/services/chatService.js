@@ -53,7 +53,8 @@ export const chatService = {
             console.error("Error sending chat message:", error);
             return {
                 success: false,
-                error: error.response?.data?.message || error.message,
+                error: error.response?.data?.error || error.message,
+                limitReached: error.response?.data?.limitReached || false,
             };
         }
     },

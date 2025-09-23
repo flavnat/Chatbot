@@ -434,7 +434,9 @@ const ChatBotWidget = () => {
     const [_templates, _setTemplates] = useState([]);
     const [_templatesLoading, _setTemplatesLoading] = useState(false);
     const dispatch = useDispatch();
-    const { messages, typing } = useSelector((state) => state.chatBot);
+    const { messages, typing, limitReached } = useSelector(
+        (state) => state.chatBot
+    );
     const messagesEndRef = useRef(null);
     const smartSuggestionsRef = useRef(null);
 
@@ -584,6 +586,7 @@ const ChatBotWidget = () => {
     };
 
     const handleSuggestedQuestionClick = (question) => {
+        if (limitReached) return;
         setInputValue(question);
         dispatch(sendMessage(question));
         setIsFirstVisit(false);
@@ -803,7 +806,7 @@ const ChatBotWidget = () => {
                             <div ref={messagesEndRef} />
                         </MessagesContainer>
 
-                        {shouldShowSuggestedQuestions() && (
+                        {shouldShowSuggestedQuestions() && !limitReached && (
                             <SuggestedQuestionsContainer>
                                 <SuggestedQuestionsGrid>
                                     {questions.map((question, index) => (
@@ -834,7 +837,12 @@ const ChatBotWidget = () => {
                                         handleSend();
                                     }
                                 }}
-                                placeholder="Type a message..."
+                                placeholder={
+                                    limitReached
+                                        ? "Monthly limit reached. Contact support at linkbuilders.support@gmail.com"
+                                        : "Type a message..."
+                                }
+                                disabled={limitReached}
                                 style={{
                                     width: "100%",
                                     border: "1px solid #3aaaff",
@@ -924,7 +932,7 @@ const ChatBotWidget = () => {
                             type="primary"
                             icon={<SendOutlined />}
                             onClick={handleSend}
-                            disabled={typing}
+                            disabled={typing || limitReached}
                         />
                     </ChatFooter>
                 </ChatPanel>

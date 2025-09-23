@@ -262,7 +262,8 @@ router.post(
                 ) {
                     return res.status(429).json({
                         success: false,
-                        error: "Monthly question limit reached. Please contact support at support@chatbot.com for more questions.",
+                        error: "Monthly question limit reached. Please contact the support team at linkbuilders.support@gmail.com",
+                        limitReached: true,
                     });
                 }
 

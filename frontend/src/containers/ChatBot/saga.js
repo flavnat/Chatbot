@@ -8,6 +8,7 @@ import {
 } from "./actions";
 import { chatService } from "../../services/chatService";
 import api from "../../services/api";
+import { setLimitReached } from "./actions";
 
 export function* handleSendMessage(action) {
     let retryCount = 0;
@@ -78,7 +79,14 @@ export function* handleSendMessage(action) {
                 return; // Success, exit the retry loop
             } else {
                 // Handle API error with better messaging
-                let errorText = `Sorry, I encountered an error: ${response.error}`;
+                // Check if monthly limit reached
+                if (response.limitReached) {
+                    yield put(setLimitReached(true));
+                }
+
+                let errorText = response.limitReached
+                    ? response.error
+                    : `Sorry, I encountered an error: ${response.error}`;
                 let shouldRetry = false;
 
                 // Provide more user-friendly error messages and determine if we should retry

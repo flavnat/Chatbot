@@ -6,6 +6,7 @@ import {
     SEND_MESSAGE_ERROR,
     CLEAR_MESSAGES,
     LOAD_MESSAGES_FROM_STORAGE,
+    SET_LIMIT_REACHED,
 } from "./constants";
 
 export const initialState = {
@@ -20,6 +21,7 @@ export const initialState = {
     typing: false,
     sessionId: null,
     error: null,
+    limitReached: false,
 };
 
 const chatBotReducer = (state = initialState, action) =>
@@ -47,6 +49,9 @@ const chatBotReducer = (state = initialState, action) =>
                 draft.messages = action.payload;
                 draft.sessionId = null;
                 draft.error = null;
+                break;
+            case SET_LIMIT_REACHED:
+                draft.limitReached = action.payload;
                 break;
         }
     });
