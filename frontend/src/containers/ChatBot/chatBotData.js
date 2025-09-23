@@ -76,3 +76,10 @@ export const helpResources = [
         read: false,
     },
 ];
+
+export const suggestedQuestions = [
+    "How can I get started?",
+    "What services do you offer?",
+    "Tell me about pricing",
+    "How do I contact support?",
+];

@@ -7,7 +7,7 @@
         "messages": [
             {
                 "role": "assistant",
-                "content": "Hello! How can I assist you today?"
+                "content": "What are the ways you can help me?"
             }
         ],
         "tags": ["greeting", "introduction"]
