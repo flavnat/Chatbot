@@ -10,7 +10,6 @@ const ChatInput = ({
     onInputChange,
     onAutoCompleteSelect,
     onSend,
-    typing,
 }) => {
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
@@ -20,7 +19,7 @@ const ChatInput = ({
 
     return (
         <ChatFooter>
-            <div style={{ flex: 1, position: "relative" , overflow: "hidden" }}>
+            <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
                 <AutoComplete
                     value={inputValue}
                     options={autoCompleteData}
@@ -53,7 +52,7 @@ const ChatInput = ({
                 type="primary"
                 icon={<SendOutlined />}
                 onClick={onSend}
-                disabled={limitReached || typing}
+                disabled={limitReached}
             />
         </ChatFooter>
     );
