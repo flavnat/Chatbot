@@ -283,8 +283,8 @@ export const TabContent = styled.div`
     height: 30px;
     justify-content: center;
     width: 100%;
-    color: ${(props) => (props.active ? "#1890ff" : "#000000")};
-    font-weight: ${(props) => (props.active ? "600" : "400")};
+    color: ${(props) => (props.$active ? "#1890ff" : "#000000")};
+    font-weight: ${(props) => (props.$active ? "600" : "400")};
 `;
 
 export const MessageWrapper = styled.div`
