@@ -583,6 +583,53 @@ router.post(
     }
 );
 
+
+/**
+
+
+
+ * PUT /api/chat/userreaction/:messageId
+
+
+ * Update the reaction (like or dislike) for a chat message.
+
+
+ */
+
+
+router.put('/userreaction/:messageId',async(req,res)=>{
+    try{
+        const {messageId}=req.params
+        const {userReaction}=req.body
+
+
+
+        if (!messageId){
+
+            return res.status(404).json({
+                success: false,
+                error: "Message Id is not found",
+
+            });}
+
+
+         const updateMessage=await ChatMessage.findByIdAndUpdate(messageId,{userReaction},{new:true})
+         res.status(200).json(updateMessage);
+    }
+
+
+    catch(error){
+        logger.error("Error update message reaction", { error: error.message });
+        res.status(500).json({
+            success: false,
+            error: "Failed to update message reaction",
+        });
+    }
+})
+
+
+
+
 /**
  * GET /api/chat/sessions
  * Get all chat sessions for the user
