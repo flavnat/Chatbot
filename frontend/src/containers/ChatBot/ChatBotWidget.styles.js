@@ -545,3 +545,35 @@ export const FaqItem = styled.div`
         font-weight: 500;
     }
 `;
+
+export const LikeIconsWrapper = styled.div`
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    gap: 15px;
+    margin-left: 5px;
+    font-size: 16px;
+    font-weight: bold;
+`;
+
+export const ReactionButton = styled.button`
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: ${(props) => (props.$active ? "#1890ff" : "#666")};
+
+    &:hover {
+        background: #f0f0f0;
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+`;

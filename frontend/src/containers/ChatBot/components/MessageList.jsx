@@ -3,7 +3,7 @@ import MessageBubble from "./MessageBubble";
 import TypingIndicator from "./TypingIndicator";
 import { MessagesContainer } from "../ChatBotWidget.styles";
 
-const MessageList = ({ messages, typing, formatTime }) => {
+const MessageList = ({ messages, typing, formatTime, handleReaction }) => {
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -18,7 +18,11 @@ const MessageList = ({ messages, typing, formatTime }) => {
         <MessagesContainer>
             {messages.map((message) => (
                 <div key={message.id}>
-                    <MessageBubble message={message} formatTime={formatTime} />
+                    <MessageBubble
+                        message={message}
+                        formatTime={formatTime}
+                        handleReaction={handleReaction}
+                    />
                 </div>
             ))}
             {typing && <TypingIndicator />}
