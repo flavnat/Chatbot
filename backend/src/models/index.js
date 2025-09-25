@@ -34,6 +34,12 @@ const chatMessageSchema = new mongoose.Schema({
         default: Date.now,
         index: true,
     },
+    userReaction:{
+        type:String,
+        enum:['like','dislike','none'],
+        default:'none'
+
+    },
     metadata: {
         processingTime: Number,
         tokensUsed: Number,

@@ -1,5 +1,5 @@
 import { takeLatest, put, call, select } from "redux-saga/effects";
-import { SEND_MESSAGE, SEND_BOT_MESSAGE } from "./constants";
+import { SEND_MESSAGE, SEND_BOT_MESSAGE,UPDATE_USER_REACTION } from "./constants";
 import {
     addMessage,
     setTyping,
@@ -7,8 +7,6 @@ import {
     sendMessageError,
 } from "./actions";
 import { chatService } from "../../services/chatService";
-import api from "../../services/api";
-import { setLimitReached } from "./actions";
 
 export function* handleSendMessage(action) {
     let retryCount = 0;
@@ -49,7 +47,7 @@ export function* handleSendMessage(action) {
             if (response.success) {
                 // Add bot response to chat
                 const botMessage = {
-                    id: Date.now() + 1,
+                    id: response.data.message.id,
                     text:
                         response.data.message.content ||
                         "I received your message!",
@@ -64,29 +62,10 @@ export function* handleSendMessage(action) {
                         message: response.data.message,
                     })
                 );
-
-                // Refresh user info to update usage
-                try {
-                    const userResponse = yield call(api.get, "/auth/me");
-                    yield put({
-                        type: "SET_USER",
-                        payload: userResponse.data.user,
-                    });
-                } catch (error) {
-                    console.error("Failed to refresh user info:", error);
-                }
-
                 return; // Success, exit the retry loop
             } else {
                 // Handle API error with better messaging
-                // Check if monthly limit reached
-                if (response.limitReached) {
-                    yield put(setLimitReached(true));
-                }
-
-                let errorText = response.limitReached
-                    ? response.error
-                    : `Sorry, I encountered an error: ${response.error}`;
+                let errorText = `Sorry, I encountered an error: ${response.error}`;
                 let shouldRetry = false;
 
                 // Provide more user-friendly error messages and determine if we should retry
@@ -153,7 +132,7 @@ export function* handleSendMessage(action) {
 
 export function* handleSendBotMessage(action) {
     const botMessage = {
-        id: Date.now(),
+        id: response.data.message.id,
         text: action.payload,
         sender: "bot",
         timestamp: new Date().toISOString(),
@@ -161,7 +140,32 @@ export function* handleSendBotMessage(action) {
     yield put(addMessage(botMessage));
 }
 
+
+export function* handleUpdateUserReaction(action) {
+    const { messageId, reaction } = action.payload;
+
+    try {
+        const response = yield call(chatService.updateReaction, messageId, reaction);
+
+
+           if (response.success) {
+              yield put({
+                 type: "UPDATE_USER_REACTION_SUCCESS",
+                 payload: { messageId, reaction },
+            });
+}
+
+else {
+            console.error("Failed to update reaction:", response.error);
+        }
+    } catch (error) {
+        console.error("Error updating reaction:", error);
+    }
+}
+
+
 export default function* chatBotSaga() {
     yield takeLatest(SEND_MESSAGE, handleSendMessage);
     yield takeLatest(SEND_BOT_MESSAGE, handleSendBotMessage);
+    yield takeLatest(UPDATE_USER_REACTION, handleUpdateUserReaction);
 }
