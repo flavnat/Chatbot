@@ -252,13 +252,10 @@ const ChatBotWidget = () => {
    }, [relatedQuestions]);
 
    const handleSend = async () => {
-      console.log("Handle send called with inputValue:", inputValue, "and typing state:", typing);
       const sent_input = inputValue;
       setInputValue("");
       if (sent_input.trim() && !typing) {
          try {
-            console.log("Sending message:", sent_input);
-
             dispatch(sendMessage(inputValue.trim()));
             const result = await chatService.sendMessage({
                message: sent_input.trim(),
@@ -266,22 +263,14 @@ const ChatBotWidget = () => {
                useRag: true,
                topK: 5,
             });
-            console.log("Result from chatService.sendMessage:", result);
 
             if (result.success) {
-               // ✅ SET STATE FIRST - BEFORE DISPATCHING
-               // console.log("Setting related questions:", result.relatedQuestions);
                setRelatedQuestions(result.relatedQuestions || ["1", "2", "3", "4"]);
-
-               // ✅ THEN DISPATCH - This will cause re-render with new related questions
-
                if (isFirstVisit) setIsFirstVisit(false);
             } else {
-               console.error("API call failed:", result.error);
                dispatch(sendMessage(inputValue.trim()));
             }
          } catch (error) {
-            console.error("Error sending message:", error);
             dispatch(sendMessage(inputValue.trim()));
          }
          setAutoCompleteData([]);
@@ -298,14 +287,6 @@ const ChatBotWidget = () => {
       setRelatedQuestions([]);
    };
 
-   //    const handleSuggestedQuestionClick = (question) => {
-   //       if (limitReached) return;
-   //       setInputValue(question);
-   //       dispatch(sendMessage(question));
-   //       setIsFirstVisit(false);
-   //       setInputValue("");
-   //    };
-
    const handleSuggestedQuestionClick = async (question) => {
       if (limitReached) return;
 
@@ -321,21 +302,16 @@ const ChatBotWidget = () => {
             topK: 5,
          });
 
-         console.log("Result from suggested question API call:", result);
-
          setIsFirstVisit(false);
-         // setInputValue("");
-
          if (result.success) {
-            // ✅ Set related questions from API response
             setRelatedQuestions(result.relatedQuestions || []);
             if (isFirstVisit) setIsFirstVisit(false);
          } else {
-            console.error("API call failed:", result.error);
+            // console.error("API call failed:", result.error);
             dispatch(sendMessage(question.trim()));
          }
       } catch (error) {
-         console.error("Error sending suggested question:", error);
+         // console.error("Error sending suggested question:", error);
          dispatch(sendMessage(question.trim()));
       }
    };
@@ -349,59 +325,6 @@ const ChatBotWidget = () => {
 
    const questions = getSuggestedQuestions(_templates);
 
-   //    const handleRelatedQuestionClick = (question) => {
-   //       if (limitReached) return;
-
-   //       // Clean the question text (remove "Question: " prefix if present)
-   //       const cleanQuestion = question.startsWith("Question: ")
-   //          ? question.replace("Question: ", "").split("\n")[0].trim()
-   //          : question;
-
-   //       setInputValue(cleanQuestion);
-   //       dispatch(sendMessage(cleanQuestion));
-   //       setRelatedQuestions([]); // Clear related questions after clicking
-   //       setIsFirstVisit(false);
-   //       setInputValue("");
-   //    };
-
-   const handleRelatedQuestionClick = async (question) => {
-      if (limitReached) return;
-
-      // Clean the question text (remove "Question: " prefix if present)
-      const cleanQuestion = question.startsWith("Question: ")
-         ? question.replace("Question: ", "").split("\n")[0].trim()
-         : question;
-
-      try {
-         setInputValue(cleanQuestion);
-         dispatch(sendMessage(cleanQuestion.trim()));
-
-         // Send the related question through the same API flow
-         const result = await chatService.sendMessage({
-            message: cleanQuestion.trim(),
-            provider: "gemini",
-            useRag: true,
-            topK: 5,
-         });
-
-         console.log("Result from related question API call:", result);
-
-         if (result.success) {
-            // ✅ Set related questions from API response
-            setRelatedQuestions(result.relatedQuestions || []);
-            setRelatedQuestions([]); // Clear the previous related questions
-            setIsFirstVisit(false);
-         } else {
-            console.error("API call failed:", result.error);
-            dispatch(sendMessage(cleanQuestion.trim()));
-         }
-      } catch (error) {
-         console.error("Error sending related question:", error);
-         dispatch(sendMessage(cleanQuestion.trim()));
-      }
-
-      setInputValue("");
-   };
    return (
       <>
          <FloatingButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
@@ -471,22 +394,10 @@ const ChatBotWidget = () => {
                            <SuggestedQuestions
                               questions={questions}
                               onQuestionClick={handleSuggestedQuestionClick}
-                              relatedQuestions={displayedRelatedQuestions} // ✅ Related questions from API
-                              isFirst={isFirstVisit} // ✅ New prop
+                              relatedQuestions={displayedRelatedQuestions}
+                              isFirst={isFirstVisit}
                            />
                         )}
-                        {/* Show related questions */}
-                        {/* {relatedQuestions.length > 0 && !limitReached && (
-                            <SuggestedQuestions
-                                questions={relatedQuestions.map(q => 
-                                    q.question?.startsWith('Question: ') 
-                                        ? q.question.replace('Question: ', '').split('\n')[0].trim()
-                                        : q.question || q
-                                )}
-                                onQuestionClick={handleRelatedQuestionClick}
-                                isRelated={true} // ✅ Related questions (2-column layout)
-                            />
-                        )} */}
                      </ChatBody>
                      <ChatFooter>
                         <ChatInput

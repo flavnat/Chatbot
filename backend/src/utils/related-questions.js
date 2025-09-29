@@ -15,7 +15,6 @@ class RelatedQuestions {
          await this.ragPipeline.initialize();
 
          this.initialized = true;
-         console.log("Related Questions service initialized successfully");
       } catch (error) {
          console.error("Failed to initialize Related Questions service:", error);
          throw error;
@@ -29,11 +28,6 @@ class RelatedQuestions {
       if (!this.initialized) await this.initialize();
 
       try {
-         console.log("🔍 Searching for related questions...", {
-            query: query,
-            topK: topK,
-         });
-
          // Using the existing RAG pipeline to search
          const searchResult = await this.ragPipeline.client.search(this.ragPipeline.collectionName, {
             vector: await this.ragPipeline.generateEmbedding(query),
@@ -42,17 +36,7 @@ class RelatedQuestions {
             with_vector: false,
          });
 
-         console.log("📊 Raw Qdrant Search Results for Related Questions:", {
-            totalResults: searchResult.length,
-            topResults_but_allnow: searchResult.slice().map((hit, index) => ({
-               rank: index + 1,
-               score: hit.score,
-               contentPreview: hit.payload.content?.substring(0, 100) + "...",
-               meta: hit.payload.meta,
-            })),
-         });
-
-         // Since your scores are low and inconsistent, using position-based filtering first
+         // using position-based filtering first
          const SKIP_COUNT = 8;
          const TAKE_COUNT = 10;
 
@@ -79,19 +63,6 @@ class RelatedQuestions {
 
          // Take only the first 6 unique results
          const finalResults = uniqueResults.slice(0, 4);
-
-         console.log("✅ Related Questions Found:", {
-            originalQuery: query,
-            skipCount: SKIP_COUNT,
-            takeCount: TAKE_COUNT,
-            beforeDeduplication: initialResults.length,
-            afterDeduplication: finalResults.length,
-            relatedQuestions: finalResults.map((r) => ({
-               question: r.question.substring(0, 80) + "...",
-               score: r.score,
-            })),
-         });
-
          return {
             success: true,
             query: query,

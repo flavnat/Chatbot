@@ -22,7 +22,6 @@ class ConversationalChatbot {
          await this.ragPipeline.initialize();
 
          this.initialized = true;
-         console.log("Conversational Chatbot initialized successfully");
       } catch (error) {
          console.error("Failed to initialize Conversational Chatbot:", error);
          throw error;
@@ -209,15 +208,9 @@ Response:`;
          // Generate response using LLM
          const llmResult = await this.llmFactory.generateResponse(provider, enhancedPrompt, options);
 
-         // ✅ GET RELATED QUESTIONS FOR FOLLOW-UP SUGGESTIONS (this is what you're missing!)
+         // GET RELATED QUESTIONS FOR FOLLOW-UP SUGGESTIONS
          const relatedQuestionsResult = await this.getRelatedQuestions(query, 20);
          const relatedQuestions = relatedQuestionsResult.relatedQuestions || [];
-
-         console.log("🎯 Related Questions for Follow-up:", {
-            originalQuery: query,
-            relatedQuestionCount: relatedQuestions.length,
-            relatedQuestions: relatedQuestions.map((rq) => rq.question.substring(0, 50) + "..."),
-         });
 
          // Add to conversation history
          this.addToHistory(sessionId, "user", query);
